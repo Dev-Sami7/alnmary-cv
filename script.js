@@ -2,237 +2,366 @@
   "use strict";
   const data = window.CV_DATA;
   if (!data) return;
-  const root = document.documentElement;
-  const $ = (selector, scope = document) => scope.querySelector(selector);
-  const $$ = (selector, scope = document) => [
-    ...scope.querySelectorAll(selector),
-  ];
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const root = document.documentElement,
+    $ = (s, c = document) => c.querySelector(s),
+    $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const gsap = window.gsap,
+    ScrollTrigger = window.ScrollTrigger,
+    ScrollToPlugin = window.ScrollToPlugin;
+  if (gsap && ScrollTrigger && ScrollToPlugin)
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)"),
+    finePointer = matchMedia("(hover: hover) and (pointer: fine)");
   const storage = {
-    get(key) {
+    get(k) {
       try {
-        return localStorage.getItem(key);
+        return localStorage.getItem(k);
       } catch {
         return null;
       }
     },
-    set(key, value) {
+    set(k, v) {
       try {
-        localStorage.setItem(key, value);
+        localStorage.setItem(k, v);
       } catch {}
     },
   };
-  let language = storage.get("abdullah-language") === "en" ? "en" : "ar";
-  let activeGroup = data.skillGroups[0].id;
-  let motionPaused = storage.get("abdullah-motion") === "paused";
-  let orbitEntryStarted = false;
-  let orbitAnimations = [];
-  let statusTimer;
-  const text = (value) =>
-    typeof value === "object" && value !== null
-      ? value[language] || value.ar || ""
-      : String(value ?? "");
-  const copy = (key) => data.copy[language][key] || data.copy.ar[key] || key;
-
-  function icon(name, className = "icon") {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("class", className);
-    svg.setAttribute("aria-hidden", "true");
-    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-    use.setAttribute("href", `#i-${name}`);
-    svg.append(use);
-    return svg;
+  let language = storage.get("abdullah-language") === "en" ? "en" : "ar",
+    activeSkill = data.skillGroups[0].id,
+    activeProject = 0;
+  let motionPaused = storage.get("abdullah-midnight-motion") === "paused",
+    motionContext = null,
+    motionMedia = null,
+    projectTween = null,
+    statusTimer,
+    firstRender = true;
+  const value = (x) => {
+    const text =
+      typeof x === "object" && x !== null
+        ? x[language] || x.ar || ""
+        : String(x ?? "");
+    return language === "ar"
+      ? text.replace(/C\+\+/g, "\u2066C++\u2069")
+      : text;
+  };
+  const copy = (k) => data.copy[language][k] || data.copy.ar[k] || k;
+  const motionEnabled = () =>
+    Boolean(gsap && ScrollTrigger && !reduced.matches && !motionPaused);
+  function element(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
   }
-
-  function element(tag, className, value) {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (value !== undefined) node.textContent = value;
-    return node;
+  function icon(name, cls = "icon") {
+    const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
+      u = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    s.setAttribute("class", cls);
+    s.setAttribute("aria-hidden", "true");
+    u.setAttribute("href", "#i-" + name);
+    s.append(u);
+    return s;
   }
-
-  function renderProjects() {
-    const list = $("[data-project-list]");
-    const previous = $$(".project[open]", list).map(
-      (item) => item.dataset.project,
+  function wrapLines() {
+    $$(".line-reveal").forEach((heading) => {
+      const lines = heading.textContent.split("\n");
+      if (lines.length === 1) return;
+      heading.replaceChildren();
+      lines.forEach((text, index) => {
+        if (index) heading.append(document.createTextNode(" "));
+        const line = element("span", "line"),
+          inner = element("span", "", text);
+        line.append(inner);
+        heading.append(line);
+      });
+    });
+    const paragraph = $("[data-scrub]");
+    const content = paragraph.textContent;
+    paragraph.replaceChildren();
+    content
+      .split(/(\s+)/)
+      .filter(Boolean)
+      .forEach((word) =>
+        paragraph.append(
+          /^\s+$/.test(word)
+            ? document.createTextNode(word)
+            : element("span", "word", word),
+        ),
+      );
+  }
+  function setActiveProject(index) {
+    activeProject = Math.max(0, Math.min(data.projects.length - 1, index));
+    $$("[data-project-select]").forEach((b) =>
+      b.setAttribute(
+        "aria-pressed",
+        String(+b.dataset.projectSelect === activeProject),
+      ),
     );
-    const firstRender = !list.children.length;
-    const fragment = document.createDocumentFragment();
+    $("[data-project-current]").textContent = String(
+      activeProject + 1,
+    ).padStart(2, "0");
+    const cinematic = $(".project-cinema").classList.contains("is-cinematic");
+    $$(".project-slide").forEach((slide, i) => {
+      slide.inert = cinematic && i !== activeProject;
+      if (cinematic)
+        slide.setAttribute("aria-hidden", String(i !== activeProject));
+      else slide.removeAttribute("aria-hidden");
+    });
+  }
+  function navigateProject(index, animate = true) {
+    const trigger = projectTween?.scrollTrigger;
+    if (trigger) {
+      const stops = [0.02, 0.5, 0.97];
+      const y = trigger.start + (trigger.end - trigger.start) * stops[index];
+      if (animate && motionEnabled())
+        gsap.to(window, {
+          scrollTo: { y, autoKill: true },
+          duration: 1.05,
+          ease: "expo.out",
+          overwrite: "auto",
+        });
+      else window.scrollTo(0, y);
+    } else {
+      const slide = $$(".project-slide")[index];
+      if (slide) scrollToTarget(slide, animate);
+    }
+    setActiveProject(index);
+  }
+  function showPreview(project) {
+    const dialog = $(".project-dialog");
+    $("#preview-title").textContent = value(project.title);
+    $("[data-preview-image]").src = project.image;
+    $("[data-preview-image]").alt =
+      `${copy("coverLabel")} — ${value(project.shortTitle)}`;
+    if (typeof dialog.showModal === "function") {
+      dialog.showModal();
+      if (motionEnabled())
+        gsap.fromTo(
+          dialog,
+          { opacity: 0.4, scale: 0.97 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.25,
+            ease: "expo.out",
+            clearProps: "opacity,transform",
+          },
+        );
+    } else window.open(project.image, "_blank", "noopener");
+  }
+  function renderProjects() {
+    const fragment = document.createDocumentFragment(),
+      selectors = document.createDocumentFragment();
     data.projects.forEach((project, index) => {
-      const details =
+      const article =
         $("#project-template").content.firstElementChild.cloneNode(true);
-      details.dataset.project = project.id;
-      details.open = firstRender ? index === 0 : previous.includes(project.id);
-      $(".project-type", details).textContent = text(project.type);
-      $(".project-title", details).textContent = text(project.title);
-      $(".project-cover", details).classList.add(`cover-${project.cover}`);
-      $(".cover-label", details).textContent = copy("coverLabel");
-      $(".cover-word", details).textContent = project.word;
-      $(".cover-title", details).textContent = text(project.shortTitle);
-      $(".project-focus", details).textContent = text(project.focus);
-      $(".project-body", details).textContent = text(project.description);
+      article.id = "project-" + project.id;
+      article.dataset.project = project.id;
+      $(".project-title", article).textContent = value(project.title);
+      $(".project-description", article).textContent = value(
+        project.description,
+      );
+      $(".project-category", article).textContent = value(project.type);
+      $(".project-concept-label", article).textContent = copy("coverLabel");
+      const image = $(".project-image-button>img", article);
+      image.src = project.image;
+      image.alt = `${copy("coverLabel")} — ${value(project.shortTitle)}`;
+      $(".image-action>span", article).textContent = copy("preview");
+      const preview = $(".project-preview", article);
+      $("span", preview).textContent = copy("preview");
+      preview.addEventListener("click", () => showPreview(project));
+      const imageButton = $(".project-image-button", article);
+      imageButton.setAttribute(
+        "aria-label",
+        `${copy("preview")}: ${value(project.title)}`,
+      );
+      imageButton.addEventListener("click", () => showPreview(project));
       project.tags.forEach((tag) =>
-        $(".project-tags", details).append(element("li", "", tag)),
+        $(".project-tags", article).append(element("li", "", tag)),
       );
       if (/^https?:\/\//i.test(project.url || "")) {
-        const link = $(".project-visit", details);
+        const link = $(".project-visit", article);
         link.hidden = false;
         link.href = project.url;
-        $("span", link).textContent = copy("projectVisit");
-        link.setAttribute(
-          "aria-label",
-          `${copy("projectVisit")} — ${text(project.shortTitle)}. ${copy("newTab")}`,
-        );
+        link.textContent = copy("projectVisit");
       }
-      details.addEventListener("toggle", () => {
-        if (details.open && !reduceMotion.matches && !motionPaused) {
-          $(".project-content", details).animate(
-            [
-              { opacity: 0.5, transform: "translateY(8px)" },
-              { opacity: 1, transform: "translateY(0)" },
-            ],
-            { duration: 250, easing: "cubic-bezier(.23,1,.32,1)" },
-          );
-        }
-      });
-      fragment.append(details);
+      fragment.append(article);
+      const button = element("button", "project-select");
+      button.type = "button";
+      button.dataset.projectSelect = index;
+      button.setAttribute("aria-label", value(project.title));
+      button.append(
+        element("span", "selector-index", String(index + 1).padStart(2, "0")),
+        element("span", "selector-label", value(project.shortTitle)),
+      );
+      button.addEventListener("click", (e) =>
+        navigateProject(index, e.detail !== 0),
+      );
+      selectors.append(button);
     });
-    list.replaceChildren(fragment);
+    $("[data-project-list]").replaceChildren(fragment);
+    $("[data-project-selector]").replaceChildren(selectors);
+    setActiveProject(activeProject);
   }
-
   function renderSkillPanel(animate = false) {
     const group =
-      data.skillGroups.find((item) => item.id === activeGroup) ||
-      data.skillGroups[0];
-    const panel = $("[data-skill-panel]");
-    panel.setAttribute("aria-labelledby", `tab-${group.id}`);
-    const fragment = document.createDocumentFragment();
-    group.items.forEach(([name, detail]) => {
-      const row = element("div", "skill-row");
-      const label = element("span", "skill-name", name);
-      label.dir = "ltr";
-      row.append(label, element("span", "skill-note", text(detail)));
-      fragment.append(row);
+        data.skillGroups.find((g) => g.id === activeSkill) ||
+        data.skillGroups[0],
+      panel = $("[data-skill-panel]");
+    panel.setAttribute("aria-labelledby", "tab-" + group.id);
+    panel.replaceChildren(
+      ...group.items.map(([name, note]) => {
+        const row = element("div", "skill-row"),
+          label = element("span", "skill-name", name);
+        label.dir = "ltr";
+        row.append(label, element("span", "skill-note", value(note)));
+        return row;
+      }),
+    );
+    $$("[data-skill-group]").forEach((b) => {
+      const selected = b.dataset.skillGroup === activeSkill;
+      b.setAttribute("aria-selected", String(selected));
+      b.tabIndex = selected ? 0 : -1;
     });
-    panel.replaceChildren(fragment);
-    $$("[data-skill-group]").forEach((button) => {
-      const selected = button.dataset.skillGroup === activeGroup;
-      button.setAttribute("aria-selected", String(selected));
-      button.tabIndex = selected ? 0 : -1;
-    });
-    if (animate && !reduceMotion.matches && !motionPaused) {
-      panel.animate([{ opacity: 0.45 }, { opacity: 1 }], {
-        duration: 200,
-        easing: "cubic-bezier(.23,1,.32,1)",
-      });
-    }
+    if (animate && motionEnabled())
+      gsap.fromTo(
+        panel.children,
+        { opacity: 0.35, y: 14 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.28,
+          stagger: 0.035,
+          ease: "expo.out",
+          clearProps: "transform,opacity",
+        },
+      );
   }
-
   function renderSkills() {
     const tabs = $("[data-skill-tabs]");
     tabs.setAttribute("aria-label", copy("skillTabLabel"));
-    const buttons = data.skillGroups.map((group) => {
-      const button = element("button", "skill-tab");
-      button.type = "button";
-      button.id = `tab-${group.id}`;
-      button.dataset.skillGroup = group.id;
-      button.setAttribute("role", "tab");
-      button.setAttribute("aria-controls", "skill-panel");
-      button.append(
-        element("span", "", text(group.title)),
-        icon("arrow", "icon arrow-icon"),
-      );
-      button.addEventListener("click", () => {
-        activeGroup = group.id;
-        renderSkillPanel(true);
-      });
-      return button;
-    });
-    tabs.replaceChildren(...buttons);
+    tabs.setAttribute(
+      "aria-orientation",
+      innerWidth > 700 ? "vertical" : "horizontal",
+    );
+    tabs.replaceChildren(
+      ...data.skillGroups.map((group) => {
+        const b = element("button", "skill-tab");
+        b.id = "tab-" + group.id;
+        b.type = "button";
+        b.dataset.skillGroup = group.id;
+        b.setAttribute("role", "tab");
+        b.setAttribute("aria-controls", "skill-panel");
+        b.append(
+          element("span", "", value(group.title)),
+          icon("arrow", "icon arrow-icon"),
+        );
+        b.addEventListener("click", (e) => {
+          activeSkill = group.id;
+          renderSkillPanel(e.detail !== 0);
+        });
+        return b;
+      }),
+    );
     renderSkillPanel();
-    const soft = $("[data-soft-skills]");
-    soft.replaceChildren(
-      ...data.softSkills[language].map((value) => {
+    $("[data-soft-skills]").replaceChildren(
+      ...data.softSkills[language].map((text) => {
         const li = element("li");
-        li.append(icon("check"), element("span", "", value));
+        li.append(icon("check"), element("span", "", text));
         return li;
       }),
     );
   }
-
   function renderCourses() {
-    const items = data.courses.map((course) => {
-      const row = element("article", "course");
-      const body = element("div");
-      body.append(
-        element("h4", "", text(course.title)),
-        element("p", "", text(course.detail)),
-      );
-      row.append(icon(course.icon), body);
-      return row;
-    });
-    $("[data-courses]").replaceChildren(...items);
+    $("[data-courses]").replaceChildren(
+      ...data.courses.map((course) => {
+        const article = element("article", "course"),
+          body = element("div");
+        body.append(
+          element("h4", "", value(course.title)),
+          element("p", "", value(course.detail)),
+        );
+        article.append(icon(course.icon), body);
+        return article;
+      }),
+    );
     $("[data-interests]").replaceChildren(
-      ...data.interests[language].map((item) => element("li", "", item)),
+      ...data.interests[language].map((text) => element("li", "", text)),
     );
   }
-
   function applyProfile() {
-    const person = data.person;
-    $$("[data-profile]").forEach((node) => {
-      const key = node.dataset.profile;
-      node.textContent =
-        key === "shortName"
-          ? `${text(person.firstName)} ${text(person.lastName)}`
-          : key === "fullNameEnglish"
-            ? person.fullName.en
-            : text(person[key]);
+    const p = data.person;
+    $$("[data-profile]").forEach((e) => {
+      const k = e.dataset.profile;
+      e.textContent =
+        k === "shortName"
+          ? `${value(p.firstName)} ${value(p.lastName)}`
+          : k === "fullNameEnglish"
+            ? p.fullName.en
+            : value(p[k]);
     });
-    $$("[data-cv]").forEach((link) => {
-      link.href = person.cv;
-      link.setAttribute("aria-label", copy("cvLabel"));
+    $$("[data-cv]").forEach((e) => {
+      e.href = p.cv;
+      e.setAttribute("aria-label", copy("cvLabel"));
     });
-    const portrait = $("[data-portrait]");
-    portrait.src = person.portrait;
-    portrait.alt = copy("portraitAlt");
-    $$("[data-email]").forEach((link) => {
-      link.textContent = person.email;
-      link.href = `mailto:${person.email}`;
+    $("[data-portrait]").src = p.portrait;
+    $("[data-portrait]").alt = copy("portraitAlt");
+    $("[data-brand]").setAttribute("aria-label", value(p.fullName));
+    $$("[data-email]").forEach((e) => {
+      e.textContent = p.email;
+      e.href = "mailto:" + p.email;
     });
-    const digits = person.whatsapp.replace(/\D/g, "");
-    $("[data-whatsapp]").href = `https://wa.me/${digits}`;
-    $("[data-whatsapp]").setAttribute(
-      "aria-label",
-      `${copy("whatsapp")}. ${copy("newTab")}`,
-    );
+    const digits = p.whatsapp.replace(/\D/g, "");
+    $("[data-whatsapp]").href = "https://wa.me/" + digits;
     $("[data-phone]").textContent =
       `+${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)} ${digits.slice(9)}`;
-    const handle = person.telegram.replace(/^@/, "");
-    $("[data-telegram]").href = `https://t.me/${handle}`;
-    $("[data-telegram]").setAttribute(
-      "aria-label",
-      `${copy("telegram")}. ${copy("newTab")}`,
+    const handle = p.telegram.replace(/^@/, "");
+    $("[data-telegram]").href = "https://t.me/" + handle;
+    $("[data-handle]").textContent = "@" + handle;
+    ["whatsapp", "telegram"].forEach((service) =>
+      $("[data-" + service + "]").setAttribute(
+        "aria-label",
+        `${copy(service)}. ${copy("newTab")}`,
+      ),
     );
-    $("[data-handle]").textContent = `@${handle}`;
-    $("[data-graduation]").textContent = person.graduation;
+    $("[data-graduation]").textContent = p.graduation;
     $("[data-year]").textContent = new Date().getFullYear();
-    $("[data-brand]").setAttribute("aria-label", text(person.fullName));
   }
-
-  function applyLanguage(value, persist = false) {
-    language = value === "en" ? "en" : "ar";
+  function resetMotion() {
+    if (gsap) gsap.killTweensOf(window);
+    motionMedia?.revert();
+    motionMedia = null;
+    motionContext?.revert();
+    motionContext = null;
+    projectTween = null;
+    $(".project-cinema").classList.remove("is-cinematic");
+    if (gsap) gsap.set($$(".project-slide"), { clearProps: "all" });
+    $$(".project-slide").forEach((slide) => {
+      slide.inert = false;
+      slide.removeAttribute("aria-hidden");
+    });
+  }
+  function updateMotionControl() {
+    root.classList.toggle("motion-paused", motionPaused);
+    $("[data-motion]").setAttribute("aria-pressed", String(motionPaused));
+    $("[data-motion]").setAttribute(
+      "aria-label",
+      copy(motionPaused ? "motionResume" : "motionPause"),
+    );
+  }
+  function applyLanguage(next, persist = false) {
+    resetMotion();
+    language = next === "en" ? "en" : "ar";
     root.lang = language;
     root.dir = language === "ar" ? "rtl" : "ltr";
     if (persist) storage.set("abdullah-language", language);
     document.title = copy("pageTitle");
-    $('meta[name="description"]').content = copy("description");
+    $("meta[name=description]").content = copy("description");
     $('meta[property="og:title"]').content = copy("pageTitle");
     $('meta[property="og:description"]').content = copy("description");
-    $$("[data-i18n]").forEach((node) => {
-      node.textContent = copy(node.dataset.i18n);
-    });
-    $$("[data-i18n-aria]").forEach((node) =>
-      node.setAttribute("aria-label", copy(node.dataset.i18nAria)),
+    $$("[data-i18n]").forEach((e) => (e.textContent = copy(e.dataset.i18n)));
+    $$("[data-i18n-aria]").forEach((e) =>
+      e.setAttribute("aria-label", copy(e.dataset.i18nAria)),
     );
     $("[data-language-label]").textContent = language === "ar" ? "EN" : "عربي";
     $("[data-language]").setAttribute("aria-label", copy("language"));
@@ -244,348 +373,636 @@
       "aria-label",
       language === "ar" ? "التنقل عبر الهاتف" : "Mobile navigation",
     );
-    $("[data-blue-label]").setAttribute("aria-label", copy("signature"));
+    $("[data-menu]").setAttribute("aria-label", copy("menu"));
+    $("[data-close-preview]").setAttribute("aria-label", copy("closePreview"));
     applyProfile();
     renderProjects();
     renderSkills();
     renderCourses();
-    updateMotionButton();
-    closeMobileMenu(false);
+    wrapLines();
+    updateMotionControl();
+    closeMenu();
+    setupMotion(firstRender);
+    firstRender = false;
+    updateScroll();
   }
-
-  function closeMobileMenu(restoreFocus = false) {
-    const button = $("[data-menu]");
-    const wasOpen = button.getAttribute("aria-expanded") === "true";
+  function setupMotion(intro = false) {
+    if (!motionEnabled()) return;
+    const direction = language === "ar" ? -1 : 1;
+    motionContext = gsap.context(() => {
+      if (intro) {
+        const opening = gsap.timeline({ defaults: { ease: "expo.out" } });
+        opening
+          .from(
+            ".hero .name-line>span",
+            { yPercent: 110, rotation: 3, duration: 1.05, stagger: 0.09 },
+            0.05,
+          )
+          .from(".hero .surname>i", { opacity: 0, y: 25, duration: 0.6 }, 0.4)
+          .from(".hero-fullname", { opacity: 0, y: 14, duration: 0.65 }, 0.35)
+          .from(
+            ".hero-motto .line>span",
+            { yPercent: 105, duration: 0.8, stagger: 0.07 },
+            0.45,
+          )
+          .from(".hero-intro", { opacity: 0, y: 18, duration: 0.8 }, 0.6)
+          .from(
+            ".hero-actions>.button",
+            { opacity: 0, y: 18, duration: 0.7, stagger: 0.07 },
+            0.7,
+          )
+          .fromTo(
+            ".portrait-frame",
+            { clipPath: "inset(0 0 100% 0)", y: 40, rotation: 5 },
+            { clipPath: "inset(0 0 0% 0)", y: 0, rotation: 0, duration: 1.3 },
+            0.15,
+          )
+          .from(
+            ".portrait-outline",
+            { opacity: 0, rotation: 15, duration: 1.3 },
+            0.3,
+          )
+          .from(
+            ".portrait-stage figcaption",
+            { opacity: 0, y: 15, duration: 0.8 },
+            0.95,
+          );
+      }
+      gsap.to(".hero-lines", {
+        yPercent: 12,
+        opacity: 0.04,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+      gsap.to(".portrait-stage", {
+        yPercent: 10,
+        rotation: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+      gsap.to(".hero-copy", {
+        yPercent: -8,
+        opacity: 0.22,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero",
+          start: "30% top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+      gsap.fromTo(
+        "[data-scrub] .word",
+        { opacity: 0.22 },
+        {
+          opacity: 1,
+          stagger: 0.1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "[data-scrub]",
+            start: "top 85%",
+            end: "bottom 55%",
+            scrub: 0.65,
+          },
+        },
+      );
+      gsap.fromTo(
+        ".inline-image",
+        { scale: 0.7, rotation: 12 },
+        {
+          scale: 1,
+          rotation: -8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".about-top",
+            start: "top 85%",
+            end: "bottom 45%",
+            scrub: 1,
+          },
+        },
+      );
+      $$(".section-title.line-reveal").forEach((title) => {
+        const lines = $$(".line>span", title);
+        if (lines.length)
+          gsap.from(lines, {
+            yPercent: 105,
+            rotation: 1.5,
+            duration: 0.9,
+            stagger: 0.07,
+            ease: "expo.out",
+            scrollTrigger: {
+              trigger: title,
+              start: "top 88%",
+              toggleActions: "play none none reverse",
+            },
+          });
+      });
+      gsap.from(".skill-tabs .skill-tab", {
+        x: direction * 25,
+        opacity: 0.25,
+        duration: 0.7,
+        stagger: 0.07,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: ".skills-workspace",
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".skills-workspace>.skill-panel", {
+        y: 35,
+        opacity: 0.25,
+        duration: 0.9,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: ".skills-workspace",
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".education-block", {
+        y: 45,
+        opacity: 0.2,
+        duration: 0.9,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: ".education-block",
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".courses-block .course", {
+        x: direction * 35,
+        opacity: 0.2,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: ".courses-block",
+          start: "top 83%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".experience-block", {
+        scale: 0.96,
+        opacity: 0.35,
+        duration: 0.9,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: ".experience-block",
+          start: "top 88%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".contact-title .line>span", {
+        yPercent: 105,
+        duration: 1.1,
+        stagger: 0.1,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: ".contact-section",
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.fromTo(
+        ".contact-orbit",
+        { rotation: -20, scale: 0.8 },
+        {
+          rotation: 20,
+          scale: 1.15,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".contact-section",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        },
+      );
+    });
+    motionMedia = gsap.matchMedia();
+    motionMedia.add("(min-width:1000px)", () => {
+      const cinema = $(".project-cinema"),
+        slides = $$(".project-slide");
+      cinema.classList.add("is-cinematic");
+      gsap.set(slides, {
+        autoAlpha: 0,
+        scale: 0.94,
+        xPercent: direction * 12,
+      });
+      gsap.set(slides[0], { autoAlpha: 1, scale: 1, xPercent: 0 });
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          id: "project-reel",
+          trigger: cinema,
+          start: "top 110px",
+          end: () => "+=" + Math.round(innerHeight * 2.35),
+          pin: true,
+          scrub: 0.85,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) =>
+            setActiveProject(Math.round(self.progress * (slides.length - 1))),
+        },
+      });
+      timeline.to({}, { duration: 0.7 });
+      for (let i = 1; i < slides.length; i++) {
+        timeline
+          .to(slides[i - 1], {
+            autoAlpha: 0,
+            scale: 0.92,
+            xPercent: -direction * 11,
+            duration: 0.7,
+            ease: "power2.inOut",
+          })
+          .fromTo(
+            slides[i],
+            { autoAlpha: 0, scale: 0.94, xPercent: direction * 14 },
+            {
+              autoAlpha: 1,
+              scale: 1,
+              xPercent: 0,
+              duration: 0.85,
+              ease: "power2.inOut",
+            },
+            "<",
+          )
+          .to({}, { duration: 0.65 });
+      }
+      projectTween = timeline;
+      setActiveProject(0);
+      return () => {
+        projectTween = null;
+        cinema.classList.remove("is-cinematic");
+        gsap.set(slides, { clearProps: "all" });
+        slides.forEach((slide) => {
+          slide.inert = false;
+          slide.removeAttribute("aria-hidden");
+        });
+      };
+    });
+    motionMedia.add("(max-width:999px)", () => {
+      $$(".project-visual").forEach((visual) =>
+        gsap.from(visual, {
+          y: 35,
+          scale: 0.95,
+          opacity: 0.35,
+          duration: 0.95,
+          ease: "expo.out",
+          scrollTrigger: {
+            trigger: visual,
+            start: "top 90%",
+            toggleActions: "play none none reverse",
+          },
+        }),
+      );
+    });
+    requestAnimationFrame(() => ScrollTrigger.refresh());
+  }
+  function scrollToTarget(target, animate = true) {
+    if (animate && motionEnabled() && ScrollToPlugin) {
+      gsap.to(window, {
+        scrollTo: { y: target, offsetY: 115, autoKill: true },
+        duration: 1.1,
+        ease: "expo.out",
+        overwrite: "auto",
+      });
+    } else target.scrollIntoView({ behavior: "auto", block: "start" });
+  }
+  function closeMenu(restore = false) {
+    const button = $("[data-menu]"),
+      opened = button.getAttribute("aria-expanded") === "true";
     $("#mobile-nav").hidden = true;
     button.setAttribute("aria-expanded", "false");
-    if (restoreFocus && wasOpen) button.focus();
+    if (restore && opened) button.focus();
   }
-
-  function updateMotionButton() {
-    root.classList.toggle("motion-paused", motionPaused);
-    $("[data-motion]").setAttribute("aria-pressed", String(motionPaused));
-    $("[data-motion]").setAttribute(
-      "aria-label",
-      copy(motionPaused ? "motionResume" : "motionPause"),
-    );
-    syncOrbitAnimations();
-  }
-
   function notify(message) {
-    const node = $("[data-status]");
     clearTimeout(statusTimer);
+    const node = $("[data-status]");
     node.textContent = message;
     node.classList.add("is-visible");
     statusTimer = setTimeout(() => node.classList.remove("is-visible"), 2600);
   }
-
   async function copyEmail() {
     let success = false;
     try {
       await navigator.clipboard.writeText(data.person.email);
       success = true;
     } catch {
-      const area = element("textarea");
-      area.value = data.person.email;
-      area.style.cssText =
+      const textarea = element("textarea");
+      textarea.value = data.person.email;
+      textarea.readOnly = true;
+      textarea.style.cssText =
         "position:fixed;inset:0;opacity:0;pointer-events:none";
-      area.setAttribute("readonly", "");
-      document.body.append(area);
-      area.select();
+      document.body.append(textarea);
+      textarea.select();
       try {
         success = document.execCommand("copy");
       } catch {}
-      area.remove();
+      textarea.remove();
       $("[data-copy-email]").focus({ preventScroll: true });
     }
     notify(
       success ? copy("copied") : `${copy("emailLabel")}: ${data.person.email}`,
     );
   }
-
-  function syncOrbitAnimations() {
-    const paused =
-      motionPaused ||
-      document.hidden ||
-      root.classList.contains("orbit-outside");
-    orbitAnimations.forEach((animation) => {
-      if (animation.playState === "finished" || animation.playState === "idle")
-        return;
-      if (paused) animation.pause();
-      else animation.play();
-    });
-  }
-
-  function composeOrbit() {
-    if (orbitEntryStarted) return;
-    orbitEntryStarted = true;
-    if (
-      reduceMotion.matches ||
-      typeof Element.prototype.animate !== "function"
-    ) {
-      root.classList.add("orbit-ready");
-      return;
-    }
-    const starts = [
-      "translate3d(0,-18px,0) rotateY(-35deg)",
-      "translate3d(16px,0,0) rotateY(10deg)",
-      "translate3d(-16px,8px,0) rotateY(45deg)",
-      "translate3d(0,15px,0) rotateX(35deg)",
-    ];
-    const finishes = [
-      "rotateY(0deg)",
-      "rotateY(45deg)",
-      "rotateY(90deg)",
-      "rotateX(90deg)",
-    ];
-    orbitAnimations = $$(".orbit-sculpture i").map((ring, index) =>
-      ring.animate(
-        [
-          { transform: starts[index], opacity: 0.65 },
-          { transform: finishes[index], opacity: 1 },
-        ],
-        {
-          duration: 900,
-          delay: index * 60,
-          easing: "cubic-bezier(.23,1,.32,1)",
-          fill: "backwards",
-        },
-      ),
-    );
-    syncOrbitAnimations();
-    Promise.allSettled(
-      orbitAnimations.map((animation) => animation.finished),
-    ).then(() => {
-      orbitAnimations = [];
-      root.classList.add("orbit-ready");
-    });
-  }
-
-  function setupObservers() {
-    if (!("IntersectionObserver" in window)) {
-      composeOrbit();
-      return;
-    }
-    const orbitObserver = new IntersectionObserver(
-      (entries) => {
-        root.classList.toggle(
-          "orbit-outside",
-          !entries[0].isIntersecting || document.hidden,
-        );
-        if (entries[0].isIntersecting && !document.hidden) composeOrbit();
-        syncOrbitAnimations();
-      },
-      { rootMargin: "50px" },
-    );
-    orbitObserver.observe($(".hero-blue"));
-    const heroObserver = new IntersectionObserver(
-      (entries) => {
-        root.classList.toggle("hero-in-view", entries[0].isIntersecting);
-      },
-      { threshold: 0 },
-    );
-    heroObserver.observe($(".hero"));
-    document.addEventListener("visibilitychange", () => {
-      const rect = $(".hero-blue").getBoundingClientRect();
-      root.classList.toggle(
-        "orbit-outside",
-        document.hidden || rect.bottom < 0 || rect.top > innerHeight,
-      );
-      syncOrbitAnimations();
-    });
-    reduceMotion.addEventListener("change", () => {
-      if (reduceMotion.matches) {
-        orbitAnimations.forEach((animation) => animation.cancel());
-        orbitAnimations = [];
-        root.classList.add("orbit-ready");
-      }
-    });
-    const navObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          $$(".desktop-nav a").forEach((link) => {
-            if (link.hash === `#${entry.target.id}`)
-              link.setAttribute("aria-current", "true");
-            else link.removeAttribute("aria-current");
-          });
-        });
-      },
-      { rootMargin: "-15% 0px -55% 0px", threshold: 0 },
-    );
-    ["about", "projects", "skills", "journey"].forEach((id) =>
-      navObserver.observe(document.getElementById(id)),
-    );
-  }
-
   function setupContact() {
-    const popover = $("#contact-options");
-    const triggers = $$("[data-contact-trigger]");
-    const supportsPopover = "showPopover" in HTMLElement.prototype;
+    const surface = $("#contact-options"),
+      triggers = $$("[data-contact-trigger]"),
+      native = "showPopover" in HTMLElement.prototype;
     const update = (opened) =>
-      triggers.forEach((button) =>
-        button.setAttribute("aria-expanded", String(opened)),
-      );
-    triggers.forEach((button) => {
-      button.setAttribute("aria-controls", "contact-options");
-      button.setAttribute("aria-expanded", "false");
+      triggers.forEach((b) => b.setAttribute("aria-expanded", String(opened)));
+    triggers.forEach((b) => {
+      b.setAttribute("aria-controls", "contact-options");
+      b.setAttribute("aria-expanded", "false");
     });
-    if (supportsPopover) {
-      popover.addEventListener("toggle", (event) =>
-        update(event.newState === "open"),
-      );
-    } else {
-      popover.hidden = true;
-      const setOpen = (opened) => {
-        popover.hidden = !opened;
-        update(opened);
+    if (native)
+      surface.addEventListener("toggle", (e) => update(e.newState === "open"));
+    else {
+      surface.hidden = true;
+      const open = (value) => {
+        surface.hidden = !value;
+        update(value);
       };
-      triggers.forEach((button) =>
-        button.addEventListener("click", () => setOpen(popover.hidden)),
+      triggers.forEach((b) =>
+        b.addEventListener("click", () => open(surface.hidden)),
       );
-      $(".close-button", popover).addEventListener("click", () => {
-        setOpen(false);
-        triggers[1].focus();
-      });
-      document.addEventListener("click", (event) => {
+      $(".close-button", surface).addEventListener("click", () => open(false));
+      document.addEventListener("click", (e) => {
         if (
-          !popover.hidden &&
-          !popover.contains(event.target) &&
-          !triggers.some((button) => button.contains(event.target))
+          !surface.contains(e.target) &&
+          !triggers.some((b) => b.contains(e.target))
         )
-          setOpen(false);
+          open(false);
       });
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && !popover.hidden) {
-          setOpen(false);
-          triggers[1].focus();
-        }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") open(false);
       });
     }
-    $$("a", popover).forEach((link) =>
-      link.addEventListener("click", () => {
-        if (supportsPopover) popover.hidePopover();
+    $$("a", surface).forEach((a) =>
+      a.addEventListener("click", () => {
+        if (native) surface.hidePopover();
         else {
-          popover.hidden = true;
+          surface.hidden = true;
           update(false);
         }
       }),
     );
   }
-
+  function setupPointer() {
+    if (!gsap) return;
+    const ring = $(".cursor-ring"),
+      moveX = gsap.quickTo(ring, "x", { duration: 0.3, ease: "power2.out" }),
+      moveY = gsap.quickTo(ring, "y", { duration: 0.3, ease: "power2.out" });
+    document.addEventListener(
+      "pointermove",
+      (e) => {
+        if (
+          !finePointer.matches ||
+          !motionEnabled() ||
+          e.pointerType === "touch"
+        )
+          return;
+        ring.style.opacity = "1";
+        moveX(e.clientX - 18);
+        moveY(e.clientY - 18);
+        const button = e.target.closest(".magnetic");
+        if (button) {
+          const box = button.getBoundingClientRect();
+          gsap.to(button, {
+            x: (e.clientX - box.left - box.width / 2) * 0.12,
+            y: (e.clientY - box.top - box.height / 2) * 0.18,
+            duration: 0.4,
+            ease: "expo.out",
+            overwrite: "auto",
+          });
+        }
+        const portrait = e.target.closest(".portrait-stage");
+        if (portrait) {
+          const box = portrait.getBoundingClientRect();
+          gsap.to($(".portrait-frame", portrait), {
+            rotationY: ((e.clientX - box.left) / box.width - 0.5) * 8,
+            rotationX: -((e.clientY - box.top) / box.height - 0.5) * 8,
+            duration: 0.6,
+            ease: "expo.out",
+            overwrite: "auto",
+          });
+        }
+      },
+      { passive: true },
+    );
+    document.addEventListener("pointerover", (e) => {
+      if (finePointer.matches)
+        ring.classList.toggle(
+          "over-control",
+          Boolean(e.target.closest("button,a,summary")),
+        );
+    });
+    document.addEventListener("pointerout", (e) => {
+      const button = e.target.closest?.(".magnetic");
+      if (button && !button.contains(e.relatedTarget) && motionEnabled())
+        gsap.to(button, {
+          x: 0,
+          y: 0,
+          duration: 0.4,
+          ease: "expo.out",
+          overwrite: "auto",
+        });
+      const portrait = e.target.closest?.(".portrait-stage");
+      if (portrait && !portrait.contains(e.relatedTarget) && motionEnabled())
+        gsap.to($(".portrait-frame", portrait), {
+          rotationX: 0,
+          rotationY: 0,
+          duration: 0.6,
+          ease: "expo.out",
+          overwrite: "auto",
+        });
+    });
+    document.documentElement.addEventListener(
+      "pointerleave",
+      () => (ring.style.opacity = "0"),
+    );
+  }
+  let scrollQueued = false;
+  function updateScroll() {
+    const max = root.scrollHeight - innerHeight;
+    $(".reading-progress>span").style.transform =
+      `scaleX(${max > 0 ? Math.max(0, Math.min(1, scrollY / max)) : 0})`;
+    root.classList.toggle("has-scrolled", scrollY > 500);
+    scrollQueued = false;
+  }
   $("[data-language]").addEventListener("click", () =>
     applyLanguage(language === "ar" ? "en" : "ar", true),
   );
+  $("[data-motion]").addEventListener("click", () => {
+    const oldY = scrollY;
+    resetMotion();
+    motionPaused = !motionPaused;
+    storage.set(
+      "abdullah-midnight-motion",
+      motionPaused ? "paused" : "playing",
+    );
+    updateMotionControl();
+    setupMotion(false);
+    window.scrollTo(0, Math.min(oldY, root.scrollHeight - innerHeight));
+  });
   $("[data-menu]").addEventListener("click", () => {
-    const menu = $("#mobile-nav");
-    const opened = menu.hidden;
-    menu.hidden = !opened;
-    $("[data-menu]").setAttribute("aria-expanded", String(opened));
-    if (opened && !reduceMotion.matches && !motionPaused)
-      menu.animate(
-        [
-          { opacity: 0.4, transform: "translateY(-6px)" },
-          { opacity: 1, transform: "translateY(0)" },
-        ],
-        { duration: 200, easing: "cubic-bezier(.23,1,.32,1)" },
+    const menu = $("#mobile-nav"),
+      open = menu.hidden;
+    menu.hidden = !open;
+    $("[data-menu]").setAttribute("aria-expanded", String(open));
+    if (open && motionEnabled())
+      gsap.fromTo(
+        menu,
+        { opacity: 0.4, y: -6 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.2,
+          ease: "expo.out",
+          clearProps: "opacity,transform",
+        },
       );
   });
-  $$("#mobile-nav a").forEach((link) =>
-    link.addEventListener("click", () => {
-      closeMobileMenu(false);
-      const target = document.getElementById(link.hash.slice(1));
-      if (target) {
-        target.setAttribute("tabindex", "-1");
-        target.focus({ preventScroll: true });
-      }
-    }),
-  );
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeMobileMenu(true);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu(true);
   });
-  document.addEventListener("click", (event) => {
-    if (!$(".site-header").contains(event.target)) closeMobileMenu();
+  document.addEventListener("click", (e) => {
+    if (!$(".site-header").contains(e.target)) closeMenu();
+    const anchor = e.target.closest('a[href^="#"]');
+    if (!anchor || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const id = anchor.getAttribute("href").slice(1),
+      target = document.getElementById(id);
+    if (!target) return;
+    closeMenu();
+    if (e.detail === 0 || !motionEnabled()) return;
+    e.preventDefault();
+    scrollToTarget(target, true);
+    try {
+      history.replaceState(null, "", "#" + id);
+    } catch {}
   });
-  $("[data-skill-tabs]").addEventListener("keydown", (event) => {
-    const buttons = $$("[data-skill-group]");
-    const position = buttons.indexOf(event.target);
-    if (position < 0) return;
+  $("[data-skill-tabs]").addEventListener("keydown", (e) => {
+    const buttons = $$("[data-skill-group]"),
+      index = buttons.indexOf(e.target);
+    if (index < 0) return;
     let next;
-    if (event.key === "ArrowDown") next = (position + 1) % buttons.length;
-    if (event.key === "ArrowUp")
-      next = (position - 1 + buttons.length) % buttons.length;
-    if (event.key === "ArrowRight")
-      next =
-        (position + (language === "ar" ? -1 : 1) + buttons.length) %
-        buttons.length;
-    if (event.key === "ArrowLeft")
-      next =
-        (position + (language === "ar" ? 1 : -1) + buttons.length) %
-        buttons.length;
-    if (event.key === "Home") next = 0;
-    if (event.key === "End") next = buttons.length - 1;
+    if (e.key === "ArrowDown") next = index + 1;
+    if (e.key === "ArrowUp") next = index - 1;
+    if (e.key === "ArrowRight") next = index + (language === "ar" ? -1 : 1);
+    if (e.key === "ArrowLeft") next = index + (language === "ar" ? 1 : -1);
+    if (e.key === "Home") next = 0;
+    if (e.key === "End") next = buttons.length - 1;
     if (next === undefined) return;
-    event.preventDefault();
-    activeGroup = buttons[next].dataset.skillGroup;
+    e.preventDefault();
+    next = (next + buttons.length) % buttons.length;
+    activeSkill = buttons[next].dataset.skillGroup;
     renderSkillPanel(false);
     buttons[next].focus();
   });
   $("[data-copy-email]").addEventListener("click", copyEmail);
-  $("[data-motion]").addEventListener("click", () => {
-    motionPaused = !motionPaused;
-    storage.set("abdullah-motion", motionPaused ? "paused" : "playing");
-    updateMotionButton();
+  $("[data-close-preview]").addEventListener("click", () =>
+    $(".project-dialog").close(),
+  );
+  $(".project-dialog").addEventListener("click", (e) => {
+    if (e.target !== e.currentTarget) return;
+    const box = e.currentTarget.getBoundingClientRect();
+    if (
+      e.clientX < box.left ||
+      e.clientX > box.right ||
+      e.clientY < box.top ||
+      e.clientY > box.bottom
+    )
+      e.currentTarget.close();
   });
-  window.matchMedia("(max-width:700px)").addEventListener("change", (event) => {
-    if (!event.matches) closeMobileMenu();
-  });
-  let progressFrame = false;
-  const progress = $(".reading-progress");
-  function updateProgress() {
-    const max = root.scrollHeight - innerHeight;
-    progress.style.transform = `scaleX(${max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0})`;
-    progressFrame = false;
-  }
   window.addEventListener(
     "scroll",
     () => {
-      if (!progressFrame) {
-        progressFrame = true;
-        requestAnimationFrame(updateProgress);
+      if (!scrollQueued) {
+        scrollQueued = true;
+        requestAnimationFrame(updateScroll);
       }
     },
     { passive: true },
   );
-  window.addEventListener("resize", updateProgress, { passive: true });
-  let printedDetails = [];
+  window.addEventListener(
+    "resize",
+    () => {
+      if (innerWidth > 700) closeMenu();
+      $("[data-skill-tabs]").setAttribute(
+        "aria-orientation",
+        innerWidth > 700 ? "vertical" : "horizontal",
+      );
+      updateScroll();
+    },
+    { passive: true },
+  );
+  reduced.addEventListener("change", () => {
+    resetMotion();
+    setupMotion(false);
+  });
+  document.addEventListener("visibilitychange", () =>
+    root.classList.toggle("page-hidden", document.hidden),
+  );
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((entries) =>
+      root.classList.toggle("hero-in-view", entries[0].isIntersecting),
+    ).observe($(".hero"));
+    const navObserver = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          $$(".desktop-nav>a").forEach((a) => {
+            if (a.hash === "#" + entry.target.id)
+              a.setAttribute("aria-current", "true");
+            else a.removeAttribute("aria-current");
+          });
+        }),
+      { rootMargin: "-15% 0px -55% 0px" },
+    );
+    ["about", "projects", "skills", "journey"].forEach((id) =>
+      navObserver.observe(document.getElementById(id)),
+    );
+  }
+  let printY = 0;
   window.addEventListener("beforeprint", () => {
-    printedDetails = $$(".project").map((node) => ({ node, open: node.open }));
-    printedDetails.forEach(({ node }) => {
-      node.open = true;
-    });
+    printY = scrollY;
+    resetMotion();
     const panel = $("[data-skill-panel]");
     panel.replaceChildren();
     data.skillGroups.forEach((group) => {
-      panel.append(element("h3", "print-skill-heading", text(group.title)));
-      group.items.forEach(([name, detail]) => {
+      panel.append(element("h3", "print-skill-heading", value(group.title)));
+      group.items.forEach(([name, note]) => {
         const row = element("div", "skill-row");
         row.append(
           element("span", "skill-name", name),
-          element("span", "skill-note", text(detail)),
+          element("span", "skill-note", value(note)),
         );
         panel.append(row);
       });
     });
   });
   window.addEventListener("afterprint", () => {
-    printedDetails.forEach(({ node, open }) => {
-      node.open = open;
-    });
-    printedDetails = [];
     renderSkillPanel();
+    setupMotion(false);
+    window.scrollTo(0, printY);
   });
   applyLanguage(language);
   setupContact();
-  setupObservers();
-  updateProgress();
+  setupPointer();
+  document.fonts?.ready.then(() => ScrollTrigger?.refresh());
+  window.addEventListener("load", () => ScrollTrigger?.refresh(), {
+    once: true,
+  });
 })();

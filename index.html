@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
     />
-    <meta name="theme-color" content="#f5f3ed" />
-    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#0e0d14" />
+    <meta name="color-scheme" content="dark" />
     <title>عبدالله النماري — تكنولوجيا المعلومات والتصميم</title>
     <meta
       name="description"
-      content="السيرة الذاتية لعبدالله محمد مثنى النماري، طالب تكنولوجيا المعلومات بجامعة الحكمة. البرمجة، التصميم، المشاريع الأكاديمية ووسائل التواصل."
+      content="الموقع الشخصي لعبدالله محمد مثنى النماري. تكنولوجيا المعلومات والتصميم والمشاريع الأكاديمية."
     />
     <meta
       property="og:title"
@@ -19,7 +19,7 @@
     />
     <meta
       property="og:description"
-      content="منطق المبرمج وحس المصمم. تعرّف على عبدالله النماري ومهاراته ومشاريعه الأكاديمية."
+      content="التصميم والبرمجة في مساحة واحدة. تعرّف على عبدالله النماري ومشاريعه ومهاراته."
     />
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
@@ -30,9 +30,12 @@
       type="font/ttf"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.css" />
-    <script defer src="profile.js"></script>
-    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="styles.css?v=midnight-2" />
+    <script defer src="assets/vendor/gsap.min.js"></script>
+    <script defer src="assets/vendor/ScrollTrigger.min.js"></script>
+    <script defer src="assets/vendor/ScrollToPlugin.min.js"></script>
+    <script defer src="profile.js?v=midnight-2"></script>
+    <script defer src="script.js?v=midnight-2"></script>
   </head>
   <body>
     <svg
@@ -95,19 +98,15 @@
         <path d="m7.8 13 9.5-6.2L11 15" />
       </symbol>
     </svg>
-
     <a class="skip-link" href="#main" data-i18n="skip">انتقل إلى المحتوى</a>
-    <div class="reading-progress" aria-hidden="true"></div>
-
+    <div class="reading-progress" aria-hidden="true"><span></span></div>
+    <div class="cursor-ring" aria-hidden="true"></div>
     <header class="site-header">
-      <div class="container header-inner">
-        <a href="#home" class="brand" aria-label="عبدالله النماري" data-brand>
-          <span class="brand-mark" aria-hidden="true">عـن<span></span></span>
-          <span class="brand-copy"
-            ><strong data-profile="shortName">عبدالله النماري</strong
-            ><small data-i18n="portfolio">الموقع الشخصي</small></span
-          >
-        </a>
+      <div class="header-inner container">
+        <a class="brand" href="#home" data-brand
+          ><span class="brand-mark" aria-hidden="true">عـن<span></span></span
+          ><span data-profile="shortName">عبدالله النماري</span></a
+        >
         <nav class="desktop-nav" aria-label="التنقل الرئيسي" data-nav-label>
           <a href="#about" data-i18n="navAbout">عني</a
           ><a href="#projects" data-i18n="navWork">المشاريع</a
@@ -122,27 +121,32 @@
             aria-label="Switch to English"
           >
             <svg class="icon"><use href="#i-language" /></svg
-            ><span data-language-label>EN</span>
-          </button>
-          <button
+            ><span data-language-label>EN</span></button
+          ><button
+            class="motion-button"
+            type="button"
+            data-motion
+            aria-pressed="false"
+            aria-label="إيقاف الحركة"
+          >
+            <span class="pause-symbol" aria-hidden="true"></span></button
+          ><button
             class="mobile-menu-button"
             type="button"
+            data-menu
             aria-expanded="false"
             aria-controls="mobile-nav"
-            data-menu
             aria-label="القائمة"
-            data-i18n-aria="menu"
           >
-            <span></span><span></span>
-          </button>
-          <a class="header-contact" href="#contact"
+            <span></span><span></span></button
+          ><a class="header-contact" href="#contact"
             ><span data-i18n="navContact">التواصل</span
             ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
           ></a>
         </div>
       </div>
       <nav
-        class="mobile-nav"
+        class="mobile-nav container"
         id="mobile-nav"
         aria-label="التنقل عبر الهاتف"
         hidden
@@ -154,131 +158,136 @@
         ><a href="#contact" data-i18n="navContact">التواصل</a>
       </nav>
     </header>
-
     <main id="main">
-      <section class="hero container" id="home" aria-labelledby="name">
-        <div class="hero-heading">
-          <div class="hero-name-block">
+      <section class="hero" id="home" aria-labelledby="name">
+        <div class="hero-atmosphere" aria-hidden="true"></div>
+        <svg
+          class="hero-lines"
+          viewBox="0 0 1440 950"
+          fill="none"
+          preserveAspectRatio="xMidYMid slice"
+          aria-hidden="true"
+        >
+          <path d="M-180 720C300 50 650 50 1100 410S1580 920 1630 110" />
+          <path d="M-180 770C300 100 650 100 1100 460S1580 970 1630 160" />
+          <path d="M-180 820C300 150 650 150 1100 510S1580 1020 1630 210" />
+        </svg>
+        <div class="hero-inner container">
+          <div class="hero-copy">
             <h1 id="name">
-              <span data-profile="firstName">عبدالله</span>
-              <span data-profile="lastName">النماري</span
-              ><span class="name-period" aria-hidden="true">.</span>
+              <span class="name-line"
+                ><span data-profile="firstName">عبدالله</span></span
+              ><span class="name-line surname"
+                ><span data-profile="lastName">النماري</span
+                ><i aria-hidden="true">.</i></span
+              >
             </h1>
-            <p class="full-name" data-profile="fullNameEnglish" dir="ltr">
+            <p class="hero-fullname" dir="ltr" data-profile="fullNameEnglish">
               Abdullah Mohammed Muthanna Alnumary
             </p>
-          </div>
-          <p class="hero-side" data-i18n="heroSide">
-            منطقُ المبرمج.<br />وحسُّ المصمّم.
-          </p>
-        </div>
-        <div class="hero-composition">
-          <div class="hero-statement">
-            <h2 data-i18n="heroStatement">
-              أُحوّل ما أتعلّمه<br />إلى شيءٍ يمكن تجربته.
+            <h2 class="hero-motto line-reveal" data-i18n="heroMotto">
+              أصمّم التجربة.<br />وأكتب منطقها.
             </h2>
             <p class="hero-intro" data-i18n="heroIntro">
               طالب تكنولوجيا معلومات، أجمع بين شغفي بالبرمجة وخبرتي في التصميم.
               أتعلم بالتجربة، وأهتمّ بالتفاصيل التي تصنع الفرق.
             </p>
-            <a class="button button-blue" href="#projects"
-              ><span data-i18n="explore">استكشف أعمالي</span
-              ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
-            ></a>
-            <a
-              class="text-link cv-link"
-              href="assets/documents/Abdullah-Alnumary-CV.pdf"
-              download
-              data-cv
-              ><svg class="icon"><use href="#i-download" /></svg
-              ><span data-i18n="download">تنزيل السيرة</span
-              ><span class="file-format" dir="ltr">PDF</span></a
-            >
+            <div class="hero-actions">
+              <a href="#projects" class="button button-primary magnetic"
+                ><span class="rolling-label"
+                  ><span data-i18n="explore">استكشف أعمالي</span
+                  ><span aria-hidden="true" data-i18n="explore"
+                    >استكشف أعمالي</span
+                  ></span
+                ><span class="button-icon"
+                  ><svg class="icon arrow-icon">
+                    <use href="#i-arrow" /></svg></span></a
+              ><a
+                class="button button-outline magnetic"
+                href="assets/documents/Abdullah-Alnumary-CV.pdf"
+                download
+                data-cv
+                ><span data-i18n="download">تنزيل السيرة</span
+                ><svg class="icon"><use href="#i-download" /></svg
+              ></a>
+            </div>
           </div>
-          <figure class="hero-portrait">
-            <div class="portrait-window">
+          <figure class="portrait-stage" data-tilt>
+            <div class="portrait-outline" aria-hidden="true"></div>
+            <div class="portrait-frame">
               <img
                 src="assets/images/abdullah.jpg"
-                alt="الصورة الشخصية لعبدالله محمد مثنى النماري"
                 width="1122"
                 height="1402"
+                alt="الصورة الشخصية لعبدالله محمد مثنى النماري"
                 fetchpriority="high"
                 data-portrait
               />
+              <div class="portrait-shade" aria-hidden="true"></div>
+              <span class="portrait-signature" dir="ltr" aria-hidden="true"
+                >A.</span
+              >
             </div>
             <figcaption>
-              <span data-i18n="portraitCaption">عبدالله محمد مثنى النماري</span
-              ><svg class="icon caption-mark" aria-hidden="true">
-                <use href="#i-spark" />
-              </svg>
-            </figcaption>
-          </figure>
-          <aside
-            class="hero-blue"
-            aria-label="التصميم والبرمجة"
-            data-blue-label
-          >
-            <div class="blue-top">
               <span data-i18n="signature">تصميم × برمجة</span
-              ><button
-                class="motion-control"
-                type="button"
-                aria-pressed="false"
-                aria-label="إيقاف الحركة"
-                data-motion
-              >
-                <span aria-hidden="true"></span>
-              </button>
+              ><span data-profile="location">ذمار، اليمن</span>
+            </figcaption>
+            <div class="portrait-corner" aria-hidden="true">
+              <svg class="icon"><use href="#i-spark" /></svg>
             </div>
-            <div class="orbit-stage" aria-hidden="true">
-              <div class="orbit-sculpture">
-                <i></i><i></i><i></i><i></i><span></span>
-              </div>
-            </div>
-            <p class="blue-idea" data-i18n="idea">
-              الفكرة بداية.<br />والتجربة تصنع الأثر.
-            </p>
-            <div class="blue-base">
-              <span data-i18n="basedIn">من ذمار، اليمن</span
-              ><svg class="icon"><use href="#i-arrow" /></svg>
-            </div>
-          </aside>
+          </figure>
         </div>
-        <div class="hero-bottom">
-          <span data-i18n="heroFoot">أتعلّم. أجرّب. وأطوّر.</span
-          ><a href="#about"
-            ><span data-i18n="scroll">تابع الحكاية</span
-            ><svg class="icon"><use href="#i-down" /></svg></a
-          ><span class="hero-coordinate" aria-hidden="true"
-            >DESIGN / CODE / GROW</span
+        <div class="hero-bottom container">
+          <a href="#about" class="scroll-cue"
+            ><span class="scroll-icon" aria-hidden="true"><svg class="icon"><use href="#i-down"/></svg></span
+            ><span data-i18n="scroll">تابع الحكاية</span></a
           >
+          <p data-i18n="heroFoot">أتعلّم. أجرّب. وأطوّر.</p>
+          <span class="hero-edition" aria-hidden="true">DESIGN MEETS CODE</span>
         </div>
       </section>
-
+      <div class="type-marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span>DESIGN</span><svg class="icon"><use href="#i-spark" /></svg
+          ><span>DEVELOPMENT</span
+          ><svg class="icon"><use href="#i-spark" /></svg
+          ><span>CREATIVE THINKING</span
+          ><svg class="icon"><use href="#i-spark" /></svg><span>DESIGN</span
+          ><svg class="icon"><use href="#i-spark" /></svg
+          ><span>DEVELOPMENT</span
+          ><svg class="icon"><use href="#i-spark" /></svg
+          ><span>CREATIVE THINKING</span
+          ><svg class="icon"><use href="#i-spark" /></svg>
+        </div>
+      </div>
       <section
-        class="section about container"
+        class="about section container"
         id="about"
         aria-labelledby="about-title"
       >
-        <div class="about-heading">
-          <h2 class="section-title" id="about-title" data-i18n="aboutTitle">
-            الفضول يقودني.<br />والتجربة تطوّرني.
+        <div class="about-top">
+          <h2 class="section-title" id="about-title">
+            <span data-i18n="aboutHeadingOne">فكرٌ تقني.</span
+            ><span class="inline-image"
+              ><img
+                src="assets/images/showroom-concept.jpg"
+                width="1586"
+                height="992"
+                alt=""
+                loading="lazy" /></span
+            ><br /><span data-i18n="aboutHeadingTwo">وحسٌّ بصري.</span>
           </h2>
-          <svg class="icon about-asterisk" aria-hidden="true">
-            <use href="#i-spark" />
-          </svg>
-        </div>
-        <div class="about-copy">
-          <p class="large-copy" data-i18n="aboutText">
-            أنا عبدالله، طالب تكنولوجيا معلومات في جامعة الحكمة. أجد متعتي في
-            المساحة التي تلتقي فيها البرمجة بالتصميم؛ حيث تتحوّل الأفكار إلى
-            واجهات وحلول ملموسة.
-          </p>
-          <p data-i18n="aboutMore">
+          <p class="about-caption" data-i18n="aboutMore">
             أمتلك أساسًا في البرمجة وقواعد البيانات والشبكات، وشاركت في مشاريع
-            أكاديمية عزّزت خبرتي العملية. أؤمن بسرعة التعلّم، والالتزام، وقيمة
-            التعاون ضمن الفريق.
+            أكاديمية عزّزت خبرتي العملية.
           </p>
+        </div>
+        <p class="scrub-copy" data-scrub data-i18n="aboutText">
+          أنا عبدالله، طالب تكنولوجيا معلومات في جامعة الحكمة. أجد متعتي في
+          المساحة التي تلتقي فيها البرمجة بالتصميم؛ حيث تتحوّل الأفكار إلى
+          واجهات وحلول ملموسة.
+        </p>
+        <div class="about-bottom">
           <div class="about-facts">
             <p>
               <strong data-i18n="experienceValue">٥ سنوات</strong
@@ -317,49 +326,65 @@
           </details>
         </div>
       </section>
-
-      <section
-        class="section work container"
-        id="projects"
-        aria-labelledby="work-title"
-      >
-        <div class="section-heading">
-          <h2 class="section-title" id="work-title" data-i18n="workTitle">
-            أفكار أخذت<br />خطوتها الأولى.
+      <section class="work section" id="projects" aria-labelledby="work-title">
+        <div class="section-heading container">
+          <h2
+            class="section-title line-reveal"
+            id="work-title"
+            data-i18n="workTitle"
+          >
+            من الفكرة<br />إلى الشاشة.
           </h2>
-          <p data-i18n="workIntro">
-            مشاريع أكاديمية أطبّق فيها ما أتعلّمه، من تطوير الويب إلى تطبيقات
-            سطح المكتب وحل المشكلات.
-          </p>
+          <div>
+            <p data-i18n="workIntro">
+              مشاريع أكاديمية أطبّق فيها ما أتعلّمه، من تطوير الويب إلى تطبيقات
+              سطح المكتب وحل المشكلات.
+            </p>
+            <span class="work-instruction"
+              ><svg class="icon"><use href="#i-down" /></svg
+              ><span data-i18n="workScroll">مرّر لاستعراض المشاريع</span></span
+            >
+          </div>
         </div>
-        <div class="project-list" data-project-list></div>
-        <p class="work-note" data-i18n="workNote">
-          أغلفة المشاريع تصاميم توضيحية لمجالات العمل.
+        <div class="project-cinema">
+          <div class="project-stage container" data-project-list></div>
+          <div class="project-controls container">
+            <div class="project-selector" data-project-selector></div>
+            <div class="project-counter" dir="ltr">
+              <span data-project-current>01</span><i></i><span>03</span>
+            </div>
+          </div>
+        </div>
+        <p class="work-note container" data-i18n="workNote">
+          صور الواجهات تصوّرات جديدة صُممت لهذا العرض، وليست لقطات من التطبيقات
+          الأصلية.
         </p>
         <noscript
-          ><p>
+          ><p class="container">
             المشاريع الأكاديمية: موقع ويب لمعرض سيارات، تطبيق سطح مكتب لإدارة
-            مطعم، وتكاليف لحل المشكلات باستخدام C++. فعّل JavaScript لعرض
-            التفاصيل التفاعلية.
+            مطعم، وتكاليف لحل المشكلات باستخدام <bdi dir="ltr">C++</bdi>.
           </p></noscript
         >
       </section>
-
       <section
-        class="skills-section"
+        class="skills section"
         id="skills"
         aria-labelledby="skills-title"
       >
         <div class="container">
           <div class="section-heading">
-            <h2 class="section-title" id="skills-title" data-i18n="skillsTitle">
-              أدوات مختلفة.<br />طريقة تفكير واحدة.
+            <h2
+              class="section-title line-reveal"
+              id="skills-title"
+              data-i18n="skillsTitle"
+            >
+              كل أداة،<br />احتمال جديد.
             </h2>
             <p data-i18n="skillsIntro">
               أبني أساسًا تقنيًا متنوعًا، وأربط المعرفة بالتطبيق.
             </p>
           </div>
-          <div class="skills-layout">
+          <div class="skills-workspace">
             <div
               class="skill-tabs"
               role="tablist"
@@ -380,23 +405,26 @@
           </div>
         </div>
       </section>
-
       <section
-        class="section journey container"
+        class="journey section container"
         id="journey"
         aria-labelledby="journey-title"
       >
         <div class="section-heading">
-          <h2 class="section-title" id="journey-title" data-i18n="journeyTitle">
-            أتعلّم اليوم،<br />لأبني ما يأتي.
+          <h2
+            class="section-title line-reveal"
+            id="journey-title"
+            data-i18n="journeyTitle"
+          >
+            المعرفة بداية.<br />والتجربة امتدادها.
           </h2>
-          <span class="journey-mark" aria-hidden="true"
-            ><i></i><i></i><i></i
-          ></span>
+          <svg class="icon chapter-symbol" aria-hidden="true">
+            <use href="#i-spark" />
+          </svg>
         </div>
         <div class="journey-grid">
-          <div class="education-block">
-            <h3 class="subheading" data-i18n="education">التعليم</h3>
+          <div class="education-block journey-item">
+            <h3 data-i18n="education">التعليم</h3>
             <h4 data-i18n="degree">بكالوريوس تكنولوجيا المعلومات</h4>
             <p class="university-line" data-i18n="universityDetail">
               جامعة الحكمة · المستوى الثالث
@@ -411,14 +439,12 @@
               وأُطبّقها في مشاريع عملية.
             </p>
           </div>
-          <div class="courses-block">
-            <h3 class="subheading" data-i18n="coursesTitle">
-              دورات توسّع الأفق.
-            </h3>
+          <div class="courses-block journey-item">
+            <h3 data-i18n="coursesTitle">دورات توسّع الأفق.</h3>
             <div data-courses></div>
           </div>
         </div>
-        <div class="experience-block">
+        <div class="experience-block journey-item">
           <div>
             <h3 data-i18n="experienceTitle">التصميم جزء من رحلتي.</h3>
             <p data-i18n="experienceBody">
@@ -440,9 +466,9 @@
           </ul>
         </div>
         <div class="beyond-grid">
-          <div class="language-section">
+          <div>
             <h3 data-i18n="languagesTitle">لغات أتواصل بها.</h3>
-            <ul>
+            <ul class="language-list">
               <li>
                 <span data-i18n="arabic">العربية</span
                 ><strong data-i18n="arabicLevel">ممتاز</strong>
@@ -453,78 +479,95 @@
               </li>
             </ul>
           </div>
-          <div class="interests-section">
+          <div>
             <h3 data-i18n="interestsTitle">خارج حدود المنهج.</h3>
-            <ul data-interests></ul>
+            <ul class="interest-list" data-interests></ul>
           </div>
         </div>
       </section>
-
       <section
-        class="contact-section"
+        class="contact-section section"
         id="contact"
         aria-labelledby="contact-title"
       >
-        <div class="container contact-inner">
-          <div class="contact-copy">
-            <h2 id="contact-title" data-i18n="contactTitle">
-              كل فكرة جميلة،<br />تبدأ بمحادثة.
-            </h2>
-            <p data-i18n="contactIntro">
-              للتواصل أو الحديث عن فكرة ومشروع، يسعدني أن أسمع منك.
-            </p>
-            <button
-              class="button button-blue contact-main-button"
-              type="button"
-              popovertarget="contact-options"
-              data-contact-trigger
-            >
-              <span data-i18n="contactButton">تواصل معنا</span
-              ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg>
-            </button>
-          </div>
+        <div class="contact-orbit" aria-hidden="true"></div>
+        <div class="container contact-content">
+          <h2
+            class="contact-title line-reveal"
+            id="contact-title"
+            data-i18n="contactTitle"
+          >
+            الفكرة القادمة،<br />قد تبدأ من هنا.
+          </h2>
+          <p data-i18n="contactIntro">
+            للتواصل أو الحديث عن فكرة ومشروع، يسعدني أن أسمع منك.
+          </p>
+          <button
+            class="button button-primary magnetic contact-main-button"
+            type="button"
+            popovertarget="contact-options"
+            data-contact-trigger
+          >
+            <span class="rolling-label"
+              ><span data-i18n="contactButton">تواصل معنا</span
+              ><span aria-hidden="true" data-i18n="contactButton"
+                >تواصل معنا</span
+              ></span
+            ><span class="button-icon"
+              ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
+            ></span>
+          </button>
           <div class="contact-email">
-            <svg class="icon large-mail" aria-hidden="true">
-              <use href="#i-mail" /></svg
-            ><span data-i18n="emailLabel">أو عبر البريد الإلكتروني</span
-            ><a href="mailto:dev.alnumary@gmail.com" dir="ltr" data-email
-              >dev.alnumary@gmail.com</a
-            ><button class="text-link" type="button" data-copy-email>
-              <svg class="icon"><use href="#i-copy" /></svg
-              ><span data-i18n="copyEmail">نسخ البريد</span>
-            </button>
+            <span data-i18n="emailLabel">أو عبر البريد الإلكتروني</span>
+            <div>
+              <a href="mailto:dev.alnumary@gmail.com" dir="ltr" data-email
+                >dev.alnumary@gmail.com</a
+              ><button
+                type="button"
+                data-copy-email
+                aria-label="نسخ البريد"
+                data-i18n-aria="copyEmail"
+              >
+                <svg class="icon"><use href="#i-copy" /></svg>
+              </button>
+            </div>
           </div>
         </div>
       </section>
     </main>
-
     <footer class="site-footer container">
-      <a class="footer-name" href="#home" data-profile="shortName"
+      <a href="#home" class="footer-name" data-profile="shortName"
         >عبدالله النماري</a
       >
       <p>
-        <span>© <span data-year>2026</span></span
-        ><span data-i18n="footerText">صُنع بشغف بالتفاصيل.</span>
+        © <span data-year>2026</span>
+        <span data-i18n="footerText">صُنع بشغف بالتفاصيل.</span>
       </p>
       <a class="back-top" href="#home"
         ><span data-i18n="backTop">إلى البداية</span
         ><svg class="icon"><use href="#i-down" /></svg
       ></a>
     </footer>
-
-    <button
-      class="contact-float"
-      type="button"
-      popovertarget="contact-options"
-      data-contact-trigger
-    >
-      <span class="contact-status" aria-hidden="true"></span
-      ><span data-i18n="contactButton">تواصل معنا</span
-      ><svg class="icon"><use href="#i-plus" /></svg>
-    </button>
+    <div class="floating-tools">
+      <a
+        class="up-button"
+        href="#home"
+        aria-label="إلى البداية"
+        data-i18n-aria="backTop"
+        ><svg class="icon"><use href="#i-down" /></svg></a
+      ><button
+        class="contact-float"
+        type="button"
+        popovertarget="contact-options"
+        data-contact-trigger
+      >
+        <span data-i18n="contactButton">تواصل معنا</span
+        ><svg class="icon"><use href="#i-plus" /></svg>
+      </button>
+    </div>
     <div
-      class="contact-popover"
       id="contact-options"
+      class="contact-popover"
       popover="auto"
       aria-labelledby="contact-options-title"
     >
@@ -544,7 +587,7 @@
         </button>
       </div>
       <a
-        class="contact-option whatsapp-option"
+        class="contact-option"
         href="https://wa.me/967770471325"
         target="_blank"
         rel="noopener noreferrer"
@@ -553,10 +596,9 @@
         ><span
           ><strong data-i18n="whatsapp">واتساب</strong
           ><small dir="ltr" data-phone>+967 770 471 325</small></span
-        ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
-      ></a>
-      <a
-        class="contact-option telegram-option"
+        ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg></a
+      ><a
+        class="contact-option"
         href="https://t.me/at2ss"
         target="_blank"
         rel="noopener noreferrer"
@@ -568,42 +610,58 @@
         ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
       ></a>
     </div>
+    <dialog class="project-dialog" aria-labelledby="preview-title">
+      <div class="preview-toolbar">
+        <h2 id="preview-title"></h2>
+        <button
+          class="close-button"
+          type="button"
+          data-close-preview
+          aria-label="إغلاق المعاينة"
+        >
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <img src="assets/images/showroom-concept.jpg" alt="" data-preview-image />
+      <p data-i18n="workNote">
+        صور الواجهات تصوّرات جديدة صُممت لهذا العرض، وليست لقطات من التطبيقات
+        الأصلية.
+      </p>
+    </dialog>
     <p class="status-message" role="status" aria-live="polite" data-status></p>
-
     <template id="project-template"
-      ><details class="project">
-        <summary>
-          <span class="project-type"></span>
+      ><article class="project-slide">
+        <div class="project-visual">
+          <button class="project-image-button" type="button">
+            <img
+              src="assets/images/showroom-concept.jpg"
+              alt=""
+              loading="lazy"
+              width="1586"
+              height="992"
+            /><span class="image-action"
+              ><svg class="icon"><use href="#i-plus" /></svg><span></span
+            ></span>
+          </button>
+          <div class="project-visual-caption">
+            <span class="project-category"></span
+            ><span class="project-concept-label"></span>
+          </div>
+        </div>
+        <div class="project-info">
           <h3 class="project-title"></h3>
-          <span class="project-toggle"
-            ><svg class="icon"><use href="#i-plus" /></svg
-          ></span>
-        </summary>
-        <div class="project-content">
-          <div class="project-cover" aria-hidden="true">
-            <div class="cover-meta">
-              <span class="cover-label"></span><span class="cover-shape"></span>
-            </div>
-            <span class="cover-word" dir="ltr"></span>
-            <div class="cover-bottom">
-              <strong class="cover-title"></strong
-              ><svg class="icon"><use href="#i-arrow" /></svg>
-            </div>
-          </div>
-          <div class="project-description">
-            <h4 class="project-focus"></h4>
-            <p class="project-body"></p>
-            <ul class="project-tags" dir="ltr"></ul>
-            <a
-              class="text-link project-visit"
-              target="_blank"
-              rel="noopener noreferrer"
-              hidden
-              ><span></span
-              ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
-            ></a>
-          </div>
-        </div></details
+          <p class="project-description"></p>
+          <ul class="project-tags" dir="ltr"></ul>
+          <button class="text-link project-preview" type="button">
+            <span></span
+            ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg></button
+          ><a
+            class="text-link project-visit"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+          ></a>
+        </div></article
     ></template>
   </body>
 </html>

@@ -1,8 +1,14 @@
-/* عدّل معلومات الموقع من هذا الملف. احفظ علامات الاقتباس والفواصل عند التعديل. */
+/* عدّل بيانات الموقع والنصوص والمشاريع من هذا الملف. */
 window.CV_DATA = {
   person: {
-    firstName: { ar: "عبدالله", en: "Abdullah" },
-    lastName: { ar: "النماري", en: "Alnumary" },
+    firstName: {
+      ar: "عبدالله",
+      en: "Abdullah",
+    },
+    lastName: {
+      ar: "النماري",
+      en: "Alnumary",
+    },
     fullName: {
       ar: "عبدالله محمد مثنى النماري",
       en: "Abdullah Mohammed Muthanna Alnumary",
@@ -11,10 +17,22 @@ window.CV_DATA = {
       ar: "طالب تكنولوجيا المعلومات",
       en: "Information Technology Student",
     },
-    university: { ar: "جامعة الحكمة", en: "Al-Hikma University" },
-    location: { ar: "ذمار، اليمن", en: "Dhamar, Yemen" },
-    nationality: { ar: "يمني", en: "Yemeni" },
-    birthDate: { ar: "٢٦ سبتمبر ٢٠٠٥", en: "26 September 2005" },
+    university: {
+      ar: "جامعة الحكمة",
+      en: "Al-Hikma University",
+    },
+    location: {
+      ar: "ذمار، اليمن",
+      en: "Dhamar, Yemen",
+    },
+    nationality: {
+      ar: "يمني",
+      en: "Yemeni",
+    },
+    birthDate: {
+      ar: "٢٦ سبتمبر ٢٠٠٥",
+      en: "26 September 2005",
+    },
     email: "dev.alnumary@gmail.com",
     whatsapp: "967770471325",
     telegram: "at2ss",
@@ -25,30 +43,46 @@ window.CV_DATA = {
   projects: [
     {
       id: "showroom",
-      type: { ar: "تطوير الويب", en: "Web Development" },
-      title: {
-        ar: "معرض سيارات، بحضور رقمي.",
-        en: "A digital home for a car showroom.",
+      type: {
+        ar: "تطوير الويب",
+        en: "Web Development",
       },
-      shortTitle: { ar: "معرض السيارات", en: "Car Showroom" },
+      title: {
+        ar: "معرض السيارات",
+        en: "The Car Showroom",
+      },
+      shortTitle: {
+        ar: "معرض السيارات",
+        en: "Car Showroom",
+      },
       description: {
         ar: "مشروع أكاديمي لتطوير موقع ويب لمعرض سيارات، وتطبيق مفاهيم بناء صفحات الويب وتنظيم المحتوى داخل واجهة واضحة.",
         en: "An academic website project for a car showroom, putting web page development and clear content organization into practice.",
       },
-      focus: { ar: "من الفكرة إلى صفحة ويب", en: "From an idea to a website" },
+      focus: {
+        ar: "من الفكرة إلى صفحة ويب",
+        en: "From an idea to a website",
+      },
       tags: ["Web Development", "UI Design"],
       cover: "showroom",
       word: "WEB",
       url: "",
+      image: "assets/images/showroom-concept.jpg",
     },
     {
       id: "restaurant",
-      type: { ar: "تطبيقات سطح المكتب", en: "Desktop Applications" },
-      title: {
-        ar: "إدارة المطعم، برؤية منظّمة.",
-        en: "A clearer way to manage a restaurant.",
+      type: {
+        ar: "تطبيقات سطح المكتب",
+        en: "Desktop Applications",
       },
-      shortTitle: { ar: "إدارة مطعم", en: "Restaurant Management" },
+      title: {
+        ar: "إدارة المطعم",
+        en: "Restaurant Management",
+      },
+      shortTitle: {
+        ar: "إدارة مطعم",
+        en: "Restaurant Management",
+      },
       description: {
         ar: "تطبيق سطح مكتب لإدارة مطعم، أُنجز كمشروع أكاديمي لتطبيق مهارات البرمجة وتنظيم وظائف التطبيق ضمن واجهة استخدام.",
         en: "An academic desktop application for restaurant management, applying programming skills to organize application functions within a user interface.",
@@ -61,79 +95,177 @@ window.CV_DATA = {
       cover: "restaurant",
       word: "APP",
       url: "",
+      image: "assets/images/restaurant-concept.jpg",
     },
     {
       id: "cpp",
-      type: { ar: "البرمجة وحل المشكلات", en: "Programming & Problem Solving" },
-      title: {
-        ar: "مسائل صغيرة. تفكير أعمق.",
-        en: "Small problems. Deeper thinking.",
+      type: {
+        ar: "البرمجة وحل المشكلات",
+        en: "Programming & Problem Solving",
       },
-      shortTitle: { ar: "حل المشكلات", en: "Problem Solving" },
+      title: {
+        ar: "مسائل بلغة C++",
+        en: "Thinking in C++",
+      },
+      shortTitle: {
+        ar: "حل المشكلات",
+        en: "Problem Solving",
+      },
       description: {
         ar: "مجموعة تكاليف أكاديمية لحل المشكلات باستخدام لغة C++، وتحويل فهم المشكلة إلى خطوات منطقية وحلول برمجية.",
         en: "A collection of academic problem-solving assignments using C++, translating an understanding of a problem into logical steps and working code.",
       },
-      focus: { ar: "فهم، تحليل، ثم حل", en: "Understand, analyze, solve" },
+      focus: {
+        ar: "فهم، تحليل، ثم حل",
+        en: "Understand, analyze, solve",
+      },
       tags: ["C++", "Programming Fundamentals"],
       cover: "cpp",
       word: "C++",
       url: "",
+      image: "assets/images/cpp-concept.jpg",
     },
   ],
   skillGroups: [
     {
       id: "web",
-      title: { ar: "الويب والبرمجة", en: "Web & Programming" },
+      title: {
+        ar: "الويب والبرمجة",
+        en: "Web & Programming",
+      },
       items: [
-        ["HTML / CSS", { ar: "تطوير واجهات الويب", en: "Web interfaces" }],
-        ["PHP", { ar: "برمجة الويب", en: "Web programming" }],
-        ["C++ / C#", { ar: "لغات البرمجة", en: "Programming languages" }],
-        ["Python", { ar: "البرمجة", en: "Programming" }],
+        [
+          "HTML / CSS",
+          {
+            ar: "تطوير واجهات الويب",
+            en: "Web interfaces",
+          },
+        ],
+        [
+          "PHP",
+          {
+            ar: "برمجة الويب",
+            en: "Web programming",
+          },
+        ],
+        [
+          "C++ / C#",
+          {
+            ar: "لغات البرمجة",
+            en: "Programming languages",
+          },
+        ],
+        [
+          "Python",
+          {
+            ar: "البرمجة",
+            en: "Programming",
+          },
+        ],
         [
           "Programming Fundamentals",
-          { ar: "أساسيات البرمجة", en: "Programming foundations" },
+          {
+            ar: "أساسيات البرمجة",
+            en: "Programming foundations",
+          },
         ],
       ],
     },
     {
       id: "systems",
-      title: { ar: "البيانات والأنظمة", en: "Data & Systems" },
+      title: {
+        ar: "البيانات والأنظمة",
+        en: "Data & Systems",
+      },
       items: [
-        ["Databases", { ar: "قواعد البيانات", en: "Database concepts" }],
-        ["Networking", { ar: "شبكات الحاسوب", en: "Computer networks" }],
+        [
+          "Databases",
+          {
+            ar: "قواعد البيانات",
+            en: "Database concepts",
+          },
+        ],
+        [
+          "Networking",
+          {
+            ar: "شبكات الحاسوب",
+            en: "Computer networks",
+          },
+        ],
         [
           "Computer Maintenance",
-          { ar: "صيانة الحاسوب", en: "Computer maintenance" },
+          {
+            ar: "صيانة الحاسوب",
+            en: "Computer maintenance",
+          },
         ],
         [
           "Internet Research",
-          { ar: "البحث عبر الإنترنت", en: "Online research" },
+          {
+            ar: "البحث عبر الإنترنت",
+            en: "Online research",
+          },
         ],
       ],
     },
     {
       id: "design",
-      title: { ar: "التصميم", en: "Design" },
+      title: {
+        ar: "التصميم",
+        en: "Design",
+      },
       items: [
         [
           "Graphic Design",
-          { ar: "التصميم الجرافيكي", en: "Visual communication" },
+          {
+            ar: "التصميم الجرافيكي",
+            en: "Visual communication",
+          },
         ],
         [
           "UI / UX",
-          { ar: "تصميم واجهات التطبيقات", en: "Application interface design" },
+          {
+            ar: "تصميم واجهات التطبيقات",
+            en: "Application interface design",
+          },
         ],
       ],
     },
     {
       id: "office",
-      title: { ar: "الأدوات المكتبية", en: "Office Tools" },
+      title: {
+        ar: "الأدوات المكتبية",
+        en: "Office Tools",
+      },
       items: [
-        ["Microsoft Office", { ar: "حزمة أوفيس", en: "Office suite" }],
-        ["Word", { ar: "تحرير المستندات", en: "Document editing" }],
-        ["Excel", { ar: "جداول البيانات", en: "Spreadsheets" }],
-        ["PowerPoint", { ar: "العروض التقديمية", en: "Presentations" }],
+        [
+          "Microsoft Office",
+          {
+            ar: "حزمة أوفيس",
+            en: "Office suite",
+          },
+        ],
+        [
+          "Word",
+          {
+            ar: "تحرير المستندات",
+            en: "Document editing",
+          },
+        ],
+        [
+          "Excel",
+          {
+            ar: "جداول البيانات",
+            en: "Spreadsheets",
+          },
+        ],
+        [
+          "PowerPoint",
+          {
+            ar: "العروض التقديمية",
+            en: "Presentations",
+          },
+        ],
       ],
     },
   ],
@@ -157,17 +289,32 @@ window.CV_DATA = {
   },
   courses: [
     {
-      title: { ar: "قيادة الحاسوب", en: "Computer Driving License" },
-      detail: { ar: "دورة ICDL", en: "ICDL course" },
+      title: {
+        ar: "قيادة الحاسوب",
+        en: "Computer Driving License",
+      },
+      detail: {
+        ar: "دورة ICDL",
+        en: "ICDL course",
+      },
       icon: "monitor",
     },
     {
-      title: { ar: "اللغة الإنجليزية", en: "English Language" },
-      detail: { ar: "دورة لغة إنجليزية", en: "English language course" },
+      title: {
+        ar: "اللغة الإنجليزية",
+        en: "English Language",
+      },
+      detail: {
+        ar: "دورة لغة إنجليزية",
+        en: "English language course",
+      },
       icon: "language",
     },
     {
-      title: { ar: "الأمن السيبراني", en: "Cybersecurity" },
+      title: {
+        ar: "الأمن السيبراني",
+        en: "Cybersecurity",
+      },
       detail: {
         ar: "دورة في الأمن السيبراني واختبار الاختراق",
         en: "Cybersecurity & penetration testing course",
@@ -205,7 +352,7 @@ window.CV_DATA = {
       basedIn: "من ذمار، اليمن",
       idea: "الفكرة بداية.\nوالتجربة تصنع الأثر.",
       signature: "تصميم × برمجة",
-      heroFoot: "أتعلّم. أجرّب. وأطوّر.",
+      heroFoot: "مساحة تجمع التصميم والبرمجة.",
       scroll: "تابع الحكاية",
       aboutTitle: "الفضول يقودني.\nوالتجربة تطوّرني.",
       aboutText:
@@ -221,19 +368,20 @@ window.CV_DATA = {
       birthDate: "تاريخ الميلاد",
       location: "الموقع",
       fullNameLabel: "الاسم الكامل",
-      workTitle: "أفكار أخذت\nخطوتها الأولى.",
+      workTitle: "من الفكرة\nإلى الشاشة.",
       workIntro:
         "مشاريع أكاديمية أطبّق فيها ما أتعلّمه، من تطوير الويب إلى تطبيقات سطح المكتب وحل المشكلات.",
       academic: "مشروع أكاديمي",
-      coverLabel: "غلاف توضيحي للمشروع",
+      coverLabel: "تصوّر لواجهة المشروع",
       projectMore: "تفاصيل المشروع",
       projectVisit: "زيارة المشروع",
-      workNote: "أغلفة المشاريع تصاميم توضيحية لمجالات العمل.",
-      skillsTitle: "أدوات مختلفة.\nطريقة تفكير واحدة.",
+      workNote:
+        "صور الواجهات تصوّرات جديدة صُممت لهذا العرض، وليست لقطات من التطبيقات الأصلية.",
+      skillsTitle: "كل أداة،\nاحتمال جديد.",
       skillsIntro: "أبني أساسًا تقنيًا متنوعًا، وأربط المعرفة بالتطبيق.",
       skillTabLabel: "مجالات المهارات",
       humanSkills: "والمهارات التي تجعل العمل أفضل.",
-      journeyTitle: "أتعلّم اليوم،\nلأبني ما يأتي.",
+      journeyTitle: "المعرفة بداية.\nوالتجربة امتدادها.",
       education: "التعليم",
       degree: "بكالوريوس تكنولوجيا المعلومات",
       universityDetail: "جامعة الحكمة · المستوى الثالث",
@@ -254,7 +402,7 @@ window.CV_DATA = {
       english: "الإنجليزية",
       englishLevel: "جيد",
       interestsTitle: "خارج حدود المنهج.",
-      contactTitle: "كل فكرة جميلة،\nتبدأ بمحادثة.",
+      contactTitle: "الفكرة القادمة،\nقد تبدأ من هنا.",
       contactIntro: "للتواصل أو الحديث عن فكرة ومشروع، يسعدني أن أسمع منك.",
       contactButton: "تواصل معنا",
       contactChoose: "اختر طريقتك للتواصل",
@@ -270,8 +418,14 @@ window.CV_DATA = {
       footerRights: "عبدالله النماري",
       newTab: "يفتح في علامة تبويب جديدة",
       cvLabel: "تحميل السيرة الذاتية بصيغة PDF",
-      motionPause: "إيقاف الحركة",
+      motionPause: "تقليل الحركة",
       motionResume: "تشغيل الحركة",
+      heroMotto: "أصمّم التجربة.\nوأكتب منطقها.",
+      aboutHeadingOne: "فكرٌ تقني.",
+      aboutHeadingTwo: "وحسٌّ بصري.",
+      preview: "تكبير الواجهة",
+      closePreview: "إغلاق المعاينة",
+      workScroll: "مرّر لاستعراض المشاريع",
     },
     en: {
       pageTitle: "Abdullah Alnumary — Information Technology & Design",
@@ -298,7 +452,7 @@ window.CV_DATA = {
       basedIn: "Based in Dhamar, Yemen",
       idea: "An idea is a start.\nPractice makes it matter.",
       signature: "Design × Code",
-      heroFoot: "Learn. Experiment. Refine.",
+      heroFoot: "Where design and code meet.",
       scroll: "Discover the story",
       aboutTitle: "Led by curiosity.\nShaped by practice.",
       aboutText:
@@ -314,21 +468,21 @@ window.CV_DATA = {
       birthDate: "Date of birth",
       location: "Location",
       fullNameLabel: "Full name",
-      workTitle: "Ideas taking\ntheir first steps.",
+      workTitle: "From an idea\nto the screen.",
       workIntro:
         "Academic projects that put learning into practice, from websites and desktop applications to programming challenges.",
       academic: "Academic project",
-      coverLabel: "Illustrative project cover",
+      coverLabel: "Interface concept",
       projectMore: "Project details",
       projectVisit: "View project",
       workNote:
-        "Project covers are illustrative designs representing each project’s field.",
-      skillsTitle: "Different tools.\nOne curious mind.",
+        "These interface concepts were created for this presentation; they are not screenshots of the original applications.",
+      skillsTitle: "Every tool.\nA new possibility.",
       skillsIntro:
         "Building a broad technical foundation, and connecting knowledge with practice.",
       skillTabLabel: "Skill categories",
       humanSkills: "And the skills that make teamwork work.",
-      journeyTitle: "Learning today.\nBuilding what comes next.",
+      journeyTitle: "Knowledge begins it.\nPractice takes it further.",
       education: "Education",
       degree: "BSc in Information Technology",
       universityDetail: "Al-Hikma University · Third year",
@@ -349,7 +503,7 @@ window.CV_DATA = {
       english: "English",
       englishLevel: "Good",
       interestsTitle: "Beyond the curriculum.",
-      contactTitle: "Every good idea\nstarts with a conversation.",
+      contactTitle: "The next idea\ncould start here.",
       contactIntro:
         "Have an idea or a project to talk about? I’d be happy to hear from you.",
       contactButton: "Get in touch",
@@ -366,8 +520,14 @@ window.CV_DATA = {
       footerRights: "Abdullah Alnumary",
       newTab: "Opens in a new tab",
       cvLabel: "Download the CV as a PDF",
-      motionPause: "Pause animation",
-      motionResume: "Play animation",
+      motionPause: "Reduce animation",
+      motionResume: "Enable animation",
+      heroMotto: "Designing the experience.\nWriting its logic.",
+      aboutHeadingOne: "A technical mind.",
+      aboutHeadingTwo: "A visual instinct.",
+      preview: "Enlarge interface",
+      closePreview: "Close preview",
+      workScroll: "Scroll to explore the projects",
     },
   },
 };
