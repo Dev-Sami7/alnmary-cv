@@ -542,7 +542,7 @@
         },
       });
       gsap.from(".courses-block .course", {
-        x: direction * 35,
+        x: direction * 16,
         opacity: 0.2,
         duration: 0.8,
         stagger: 0.1,
