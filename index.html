@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f5f3ed" />
+    <meta name="color-scheme" content="light" />
+    <title>عبدالله النماري — تكنولوجيا المعلومات والتصميم</title>
+    <meta
+      name="description"
+      content="السيرة الذاتية لعبدالله محمد مثنى النماري، طالب تكنولوجيا المعلومات بجامعة الحكمة. البرمجة، التصميم، المشاريع الأكاديمية ووسائل التواصل."
+    />
+    <meta
+      property="og:title"
+      content="عبدالله النماري — تكنولوجيا المعلومات والتصميم"
+    />
+    <meta
+      property="og:description"
+      content="منطق المبرمج وحس المصمم. تعرّف على عبدالله النماري ومهاراته ومشاريعه الأكاديمية."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link
+      rel="preload"
+      href="assets/fonts/alexandria.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="profile.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <svg
+      class="icon-definitions"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M5 19 19 5M5 5h14v14" />
+      </symbol>
+      <symbol id="i-down" viewBox="0 0 24 24">
+        <path d="M12 4v16m-6-6 6 6 6-6" />
+      </symbol>
+      <symbol id="i-download" viewBox="0 0 24 24">
+        <path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24">
+        <path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M6 18 18 6" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect x="8" y="8" width="12" height="12" rx="2" />
+        <path d="M16 8V4H4v12h4" />
+      </symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m3 6 9 7 9-7" />
+      </symbol>
+      <symbol id="i-language" viewBox="0 0 24 24">
+        <path
+          d="M3 5h11M8 3v2m4 0c-1 5-4 8-8 10m1-7c1 3 4 6 7 7m2 5 4-10 4 10m-6-4h4"
+        />
+      </symbol>
+      <symbol id="i-monitor" viewBox="0 0 24 24">
+        <rect x="2" y="3" width="20" height="14" rx="2" />
+        <path d="M8 21h8m-4-4v4" />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6Z" />
+        <path d="m8 12 3 3 5-6" />
+      </symbol>
+      <symbol id="i-whatsapp" viewBox="0 0 24 24">
+        <path
+          d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.3-4.7a8.5 8.5 0 1 1 16.2-4.1Z"
+        />
+        <path
+          d="M8.2 7.6c-.8 1.1.1 3.5 1.7 5.1s4 2.4 5.1 1.6l1-1.2-2.3-1.3-.9.8a7.8 7.8 0 0 1-2.4-2.4l.7-.9-1.3-2.2Z"
+        />
+      </symbol>
+      <symbol id="i-telegram" viewBox="0 0 24 24">
+        <path d="m21 3-4 18-6-6-4 4 .8-6L3 11Z" />
+        <path d="m7.8 13 9.5-6.2L11 15" />
+      </symbol>
+    </svg>
+
+    <a class="skip-link" href="#main" data-i18n="skip">انتقل إلى المحتوى</a>
+    <div class="reading-progress" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="#home" class="brand" aria-label="عبدالله النماري" data-brand>
+          <span class="brand-mark" aria-hidden="true">عـن<span></span></span>
+          <span class="brand-copy"
+            ><strong data-profile="shortName">عبدالله النماري</strong
+            ><small data-i18n="portfolio">الموقع الشخصي</small></span
+          >
+        </a>
+        <nav class="desktop-nav" aria-label="التنقل الرئيسي" data-nav-label>
+          <a href="#about" data-i18n="navAbout">عني</a
+          ><a href="#projects" data-i18n="navWork">المشاريع</a
+          ><a href="#skills" data-i18n="navSkills">المهارات</a
+          ><a href="#journey" data-i18n="navJourney">الرحلة</a>
+        </nav>
+        <div class="header-tools">
+          <button
+            class="language-button"
+            type="button"
+            data-language
+            aria-label="Switch to English"
+          >
+            <svg class="icon"><use href="#i-language" /></svg
+            ><span data-language-label>EN</span>
+          </button>
+          <button
+            class="mobile-menu-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+            data-menu
+            aria-label="القائمة"
+            data-i18n-aria="menu"
+          >
+            <span></span><span></span>
+          </button>
+          <a class="header-contact" href="#contact"
+            ><span data-i18n="navContact">التواصل</span
+            ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
+          ></a>
+        </div>
+      </div>
+      <nav
+        class="mobile-nav"
+        id="mobile-nav"
+        aria-label="التنقل عبر الهاتف"
+        hidden
+      >
+        <a href="#about" data-i18n="navAbout">عني</a
+        ><a href="#projects" data-i18n="navWork">المشاريع</a
+        ><a href="#skills" data-i18n="navSkills">المهارات</a
+        ><a href="#journey" data-i18n="navJourney">الرحلة</a
+        ><a href="#contact" data-i18n="navContact">التواصل</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero container" id="home" aria-labelledby="name">
+        <div class="hero-heading">
+          <div class="hero-name-block">
+            <h1 id="name">
+              <span data-profile="firstName">عبدالله</span>
+              <span data-profile="lastName">النماري</span
+              ><span class="name-period" aria-hidden="true">.</span>
+            </h1>
+            <p class="full-name" data-profile="fullNameEnglish" dir="ltr">
+              Abdullah Mohammed Muthanna Alnumary
+            </p>
+          </div>
+          <p class="hero-side" data-i18n="heroSide">
+            منطقُ المبرمج.<br />وحسُّ المصمّم.
+          </p>
+        </div>
+        <div class="hero-composition">
+          <div class="hero-statement">
+            <h2 data-i18n="heroStatement">
+              أُحوّل ما أتعلّمه<br />إلى شيءٍ يمكن تجربته.
+            </h2>
+            <p class="hero-intro" data-i18n="heroIntro">
+              طالب تكنولوجيا معلومات، أجمع بين شغفي بالبرمجة وخبرتي في التصميم.
+              أتعلم بالتجربة، وأهتمّ بالتفاصيل التي تصنع الفرق.
+            </p>
+            <a class="button button-blue" href="#projects"
+              ><span data-i18n="explore">استكشف أعمالي</span
+              ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
+            ></a>
+            <a
+              class="text-link cv-link"
+              href="assets/documents/Abdullah-Alnumary-CV.pdf"
+              download
+              data-cv
+              ><svg class="icon"><use href="#i-download" /></svg
+              ><span data-i18n="download">تنزيل السيرة</span
+              ><span class="file-format" dir="ltr">PDF</span></a
+            >
+          </div>
+          <figure class="hero-portrait">
+            <div class="portrait-window">
+              <img
+                src="assets/images/abdullah.jpg"
+                alt="الصورة الشخصية لعبدالله محمد مثنى النماري"
+                width="1122"
+                height="1402"
+                fetchpriority="high"
+                data-portrait
+              />
+            </div>
+            <figcaption>
+              <span data-i18n="portraitCaption">عبدالله محمد مثنى النماري</span
+              ><svg class="icon caption-mark" aria-hidden="true">
+                <use href="#i-spark" />
+              </svg>
+            </figcaption>
+          </figure>
+          <aside
+            class="hero-blue"
+            aria-label="التصميم والبرمجة"
+            data-blue-label
+          >
+            <div class="blue-top">
+              <span data-i18n="signature">تصميم × برمجة</span
+              ><button
+                class="motion-control"
+                type="button"
+                aria-pressed="false"
+                aria-label="إيقاف الحركة"
+                data-motion
+              >
+                <span aria-hidden="true"></span>
+              </button>
+            </div>
+            <div class="orbit-stage" aria-hidden="true">
+              <div class="orbit-sculpture">
+                <i></i><i></i><i></i><i></i><span></span>
+              </div>
+            </div>
+            <p class="blue-idea" data-i18n="idea">
+              الفكرة بداية.<br />والتجربة تصنع الأثر.
+            </p>
+            <div class="blue-base">
+              <span data-i18n="basedIn">من ذمار، اليمن</span
+              ><svg class="icon"><use href="#i-arrow" /></svg>
+            </div>
+          </aside>
+        </div>
+        <div class="hero-bottom">
+          <span data-i18n="heroFoot">أتعلّم. أجرّب. وأطوّر.</span
+          ><a href="#about"
+            ><span data-i18n="scroll">تابع الحكاية</span
+            ><svg class="icon"><use href="#i-down" /></svg></a
+          ><span class="hero-coordinate" aria-hidden="true"
+            >DESIGN / CODE / GROW</span
+          >
+        </div>
+      </section>
+
+      <section
+        class="section about container"
+        id="about"
+        aria-labelledby="about-title"
+      >
+        <div class="about-heading">
+          <h2 class="section-title" id="about-title" data-i18n="aboutTitle">
+            الفضول يقودني.<br />والتجربة تطوّرني.
+          </h2>
+          <svg class="icon about-asterisk" aria-hidden="true">
+            <use href="#i-spark" />
+          </svg>
+        </div>
+        <div class="about-copy">
+          <p class="large-copy" data-i18n="aboutText">
+            أنا عبدالله، طالب تكنولوجيا معلومات في جامعة الحكمة. أجد متعتي في
+            المساحة التي تلتقي فيها البرمجة بالتصميم؛ حيث تتحوّل الأفكار إلى
+            واجهات وحلول ملموسة.
+          </p>
+          <p data-i18n="aboutMore">
+            أمتلك أساسًا في البرمجة وقواعد البيانات والشبكات، وشاركت في مشاريع
+            أكاديمية عزّزت خبرتي العملية. أؤمن بسرعة التعلّم، والالتزام، وقيمة
+            التعاون ضمن الفريق.
+          </p>
+          <div class="about-facts">
+            <p>
+              <strong data-i18n="experienceValue">٥ سنوات</strong
+              ><span data-i18n="experienceLabel"
+                >خبرة في التصميم الجرافيكي</span
+              >
+            </p>
+            <p>
+              <strong data-i18n="educationValue">٢٠٢٨</strong
+              ><span data-i18n="educationLabel">تخرّج متوقّع</span>
+            </p>
+          </div>
+          <details class="personal-details">
+            <summary>
+              <span data-i18n="personalDetails">بيانات شخصية</span
+              ><svg class="icon"><use href="#i-plus" /></svg>
+            </summary>
+            <dl>
+              <div>
+                <dt data-i18n="fullNameLabel">الاسم الكامل</dt>
+                <dd data-profile="fullName">عبدالله محمد مثنى النماري</dd>
+              </div>
+              <div>
+                <dt data-i18n="nationality">الجنسية</dt>
+                <dd data-profile="nationality">يمني</dd>
+              </div>
+              <div>
+                <dt data-i18n="birthDate">تاريخ الميلاد</dt>
+                <dd data-profile="birthDate">٢٦ سبتمبر ٢٠٠٥</dd>
+              </div>
+              <div>
+                <dt data-i18n="location">الموقع</dt>
+                <dd data-profile="location">ذمار، اليمن</dd>
+              </div>
+            </dl>
+          </details>
+        </div>
+      </section>
+
+      <section
+        class="section work container"
+        id="projects"
+        aria-labelledby="work-title"
+      >
+        <div class="section-heading">
+          <h2 class="section-title" id="work-title" data-i18n="workTitle">
+            أفكار أخذت<br />خطوتها الأولى.
+          </h2>
+          <p data-i18n="workIntro">
+            مشاريع أكاديمية أطبّق فيها ما أتعلّمه، من تطوير الويب إلى تطبيقات
+            سطح المكتب وحل المشكلات.
+          </p>
+        </div>
+        <div class="project-list" data-project-list></div>
+        <p class="work-note" data-i18n="workNote">
+          أغلفة المشاريع تصاميم توضيحية لمجالات العمل.
+        </p>
+        <noscript
+          ><p>
+            المشاريع الأكاديمية: موقع ويب لمعرض سيارات، تطبيق سطح مكتب لإدارة
+            مطعم، وتكاليف لحل المشكلات باستخدام C++. فعّل JavaScript لعرض
+            التفاصيل التفاعلية.
+          </p></noscript
+        >
+      </section>
+
+      <section
+        class="skills-section"
+        id="skills"
+        aria-labelledby="skills-title"
+      >
+        <div class="container">
+          <div class="section-heading">
+            <h2 class="section-title" id="skills-title" data-i18n="skillsTitle">
+              أدوات مختلفة.<br />طريقة تفكير واحدة.
+            </h2>
+            <p data-i18n="skillsIntro">
+              أبني أساسًا تقنيًا متنوعًا، وأربط المعرفة بالتطبيق.
+            </p>
+          </div>
+          <div class="skills-layout">
+            <div
+              class="skill-tabs"
+              role="tablist"
+              aria-label="مجالات المهارات"
+              data-skill-tabs
+            ></div>
+            <div
+              class="skill-panel"
+              id="skill-panel"
+              role="tabpanel"
+              tabindex="0"
+              data-skill-panel
+            ></div>
+          </div>
+          <div class="soft-skills">
+            <h3 data-i18n="humanSkills">والمهارات التي تجعل العمل أفضل.</h3>
+            <ul data-soft-skills></ul>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="section journey container"
+        id="journey"
+        aria-labelledby="journey-title"
+      >
+        <div class="section-heading">
+          <h2 class="section-title" id="journey-title" data-i18n="journeyTitle">
+            أتعلّم اليوم،<br />لأبني ما يأتي.
+          </h2>
+          <span class="journey-mark" aria-hidden="true"
+            ><i></i><i></i><i></i
+          ></span>
+        </div>
+        <div class="journey-grid">
+          <div class="education-block">
+            <h3 class="subheading" data-i18n="education">التعليم</h3>
+            <h4 data-i18n="degree">بكالوريوس تكنولوجيا المعلومات</h4>
+            <p class="university-line" data-i18n="universityDetail">
+              جامعة الحكمة · المستوى الثالث
+            </p>
+            <div class="graduation">
+              <span data-i18n="expected">التخرّج المتوقّع</span
+              ><strong data-graduation>2028</strong
+              ><svg class="icon"><use href="#i-arrow" /></svg>
+            </div>
+            <p class="education-note" data-i18n="educationNote">
+              مسار أكاديمي أُنمّي خلاله معرفتي بالبرمجة، والبيانات، والشبكات،
+              وأُطبّقها في مشاريع عملية.
+            </p>
+          </div>
+          <div class="courses-block">
+            <h3 class="subheading" data-i18n="coursesTitle">
+              دورات توسّع الأفق.
+            </h3>
+            <div data-courses></div>
+          </div>
+        </div>
+        <div class="experience-block">
+          <div>
+            <h3 data-i18n="experienceTitle">التصميم جزء من رحلتي.</h3>
+            <p data-i18n="experienceBody">
+              خبرة في التصميم الجرافيكي تمتد إلى خمس سنوات، إلى جانب تصميم
+              واجهات التطبيقات UI/UX.
+            </p>
+          </div>
+          <ul>
+            <li>
+              <strong data-i18n="graphicDesign">التصميم الجرافيكي</strong
+              ><span data-i18n="graphicYears">٥ سنوات من الخبرة</span>
+            </li>
+            <li>
+              <strong data-i18n="interfaceDesign">تصميم واجهات التطبيقات</strong
+              ><span data-i18n="interfaceDetail"
+                >واجهات وتجربة مستخدم UI/UX</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="beyond-grid">
+          <div class="language-section">
+            <h3 data-i18n="languagesTitle">لغات أتواصل بها.</h3>
+            <ul>
+              <li>
+                <span data-i18n="arabic">العربية</span
+                ><strong data-i18n="arabicLevel">ممتاز</strong>
+              </li>
+              <li>
+                <span data-i18n="english">الإنجليزية</span
+                ><strong data-i18n="englishLevel">جيد</strong>
+              </li>
+            </ul>
+          </div>
+          <div class="interests-section">
+            <h3 data-i18n="interestsTitle">خارج حدود المنهج.</h3>
+            <ul data-interests></ul>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="contact-section"
+        id="contact"
+        aria-labelledby="contact-title"
+      >
+        <div class="container contact-inner">
+          <div class="contact-copy">
+            <h2 id="contact-title" data-i18n="contactTitle">
+              كل فكرة جميلة،<br />تبدأ بمحادثة.
+            </h2>
+            <p data-i18n="contactIntro">
+              للتواصل أو الحديث عن فكرة ومشروع، يسعدني أن أسمع منك.
+            </p>
+            <button
+              class="button button-blue contact-main-button"
+              type="button"
+              popovertarget="contact-options"
+              data-contact-trigger
+            >
+              <span data-i18n="contactButton">تواصل معنا</span
+              ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg>
+            </button>
+          </div>
+          <div class="contact-email">
+            <svg class="icon large-mail" aria-hidden="true">
+              <use href="#i-mail" /></svg
+            ><span data-i18n="emailLabel">أو عبر البريد الإلكتروني</span
+            ><a href="mailto:dev.alnumary@gmail.com" dir="ltr" data-email
+              >dev.alnumary@gmail.com</a
+            ><button class="text-link" type="button" data-copy-email>
+              <svg class="icon"><use href="#i-copy" /></svg
+              ><span data-i18n="copyEmail">نسخ البريد</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer container">
+      <a class="footer-name" href="#home" data-profile="shortName"
+        >عبدالله النماري</a
+      >
+      <p>
+        <span>© <span data-year>2026</span></span
+        ><span data-i18n="footerText">صُنع بشغف بالتفاصيل.</span>
+      </p>
+      <a class="back-top" href="#home"
+        ><span data-i18n="backTop">إلى البداية</span
+        ><svg class="icon"><use href="#i-down" /></svg
+      ></a>
+    </footer>
+
+    <button
+      class="contact-float"
+      type="button"
+      popovertarget="contact-options"
+      data-contact-trigger
+    >
+      <span class="contact-status" aria-hidden="true"></span
+      ><span data-i18n="contactButton">تواصل معنا</span
+      ><svg class="icon"><use href="#i-plus" /></svg>
+    </button>
+    <div
+      class="contact-popover"
+      id="contact-options"
+      popover="auto"
+      aria-labelledby="contact-options-title"
+    >
+      <div class="popover-heading">
+        <h2 id="contact-options-title" data-i18n="contactChoose">
+          اختر طريقتك للتواصل
+        </h2>
+        <button
+          class="close-button"
+          type="button"
+          popovertarget="contact-options"
+          popovertargetaction="hide"
+          aria-label="إغلاق خيارات التواصل"
+          data-i18n-aria="closeContact"
+        >
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <a
+        class="contact-option whatsapp-option"
+        href="https://wa.me/967770471325"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-whatsapp
+        ><svg class="icon"><use href="#i-whatsapp" /></svg
+        ><span
+          ><strong data-i18n="whatsapp">واتساب</strong
+          ><small dir="ltr" data-phone>+967 770 471 325</small></span
+        ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
+      ></a>
+      <a
+        class="contact-option telegram-option"
+        href="https://t.me/at2ss"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-telegram
+        ><svg class="icon"><use href="#i-telegram" /></svg
+        ><span
+          ><strong data-i18n="telegram">تيليجرام</strong
+          ><small dir="ltr" data-handle>@at2ss</small></span
+        ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
+      ></a>
+    </div>
+    <p class="status-message" role="status" aria-live="polite" data-status></p>
+
+    <template id="project-template"
+      ><details class="project">
+        <summary>
+          <span class="project-type"></span>
+          <h3 class="project-title"></h3>
+          <span class="project-toggle"
+            ><svg class="icon"><use href="#i-plus" /></svg
+          ></span>
+        </summary>
+        <div class="project-content">
+          <div class="project-cover" aria-hidden="true">
+            <div class="cover-meta">
+              <span class="cover-label"></span><span class="cover-shape"></span>
+            </div>
+            <span class="cover-word" dir="ltr"></span>
+            <div class="cover-bottom">
+              <strong class="cover-title"></strong
+              ><svg class="icon"><use href="#i-arrow" /></svg>
+            </div>
+          </div>
+          <div class="project-description">
+            <h4 class="project-focus"></h4>
+            <p class="project-body"></p>
+            <ul class="project-tags" dir="ltr"></ul>
+            <a
+              class="text-link project-visit"
+              target="_blank"
+              rel="noopener noreferrer"
+              hidden
+              ><span></span
+              ><svg class="icon arrow-icon"><use href="#i-arrow" /></svg
+            ></a>
+          </div>
+        </div></details
+    ></template>
+  </body>
+</html>
